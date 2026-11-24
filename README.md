@@ -1,13 +1,13 @@
-# Dimas Di Ajeng Duwi Saputra — Portfolio
+﻿# Dimas Di Ajeng Duwi Saputra - Portfolio
 
 Personal portfolio website built with a minimalist editorial aesthetic, live-typing hero, and an interactive **Curved Slim 3D Vinyl LP Showcase** running at 60fps.
 
 ## Highlights
 
-- **Live-Typing Hero (`#hero`)** — Zero-dependency typewriter opening with mask-slide reveals and `prefers-reduced-motion` support.
-- **Curved Slim 3D Vinyl LP Showcase (`#projects`)** — Interactive 3D vinyl shelf featuring 7 flagship projects (2023–2026) with dual-sided artwork, directional flip animation, drag/keyboard/timeline navigation, and natural vertical scroll pass-through.
-- **Linked Case Study Viewer (`#project-detail`)** — Selecting any vinyl opens its full project breakdown with smooth scrolling and SVG ink-bleed artwork reveal.
-- **Design System** — Warm paper palette (`#ECE8E0`), cobalt accents (`#1F3FB0`), unified self-hosted `Inter Tight` typography, and subtle paper grain texture.
+- **Live-Typing Hero (`#hero`)** - Zero-dependency typewriter opening with mask-slide reveals and `prefers-reduced-motion` support.
+- **Curved Slim 3D Vinyl LP Showcase (`#projects`)** - Interactive 3D vinyl shelf featuring 7 flagship projects (2023–2026) with dual-sided artwork, directional flip animation, drag/keyboard/timeline navigation, and natural vertical scroll pass-through.
+- **Linked Case Study Viewer (`#project-detail`)** - Selecting any vinyl opens its full project breakdown with smooth scrolling and SVG ink-bleed artwork reveal.
+- **Design System** - Warm paper palette (`#ECE8E0`), cobalt accents (`#1F3FB0`), unified self-hosted `Inter Tight` typography, and subtle paper grain texture.
 
 ## Featured Projects
 
@@ -76,6 +76,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 
 ## Documentation
 
-- [PRD.md](./PRD.md) — Product vision, section specifications, and project data
-- [ARCHITECTURE.md](./ARCHITECTURE.md) — State flow, 3D math, and directory architecture
-- [RULES.md](./RULES.md) — Design tokens and engineering guidelines
+- [PRD.md](./PRD.md) - Product vision, section specifications, and project data
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - State flow, 3D math, and directory architecture
+- [RULES.md](./RULES.md) - Design tokens and engineering guidelines

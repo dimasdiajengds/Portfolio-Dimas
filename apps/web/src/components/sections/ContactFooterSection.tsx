@@ -25,13 +25,13 @@ export function ContactFooterSection() {
     >
       <div className="max-w-[1520px] mx-auto">
         <div className="pb-6 border-b border-[var(--hairline)] flex items-center justify-between">
-          <span className="lbl text-[var(--cobalt)]">{contact.sectionLabel}</span>
+          <span className="lbl text-[var(--ink)]">{contact.sectionLabel}</span>
           <span className="lbl text-[var(--muted)]">{PROFILE.availability.toUpperCase()}</span>
         </div>
 
         {/* High-Whitespace Contact Stage */}
         <div className="py-16 md:py-24 max-w-[980px]">
-          <h2 className="text-[clamp(36px,5.6vw,76px)] font-semibold leading-[1.03] tracking-[-0.03em] text-[var(--ink)]">
+          <h2 className="text-[clamp(36px,5.6vw,76px)] font-bold leading-[1.03] tracking-[-0.03em] text-[var(--ink)]">
             {contact.headline}
           </h2>
 
@@ -43,7 +43,7 @@ export function ContactFooterSection() {
             <button
               type="button"
               onClick={handleCopyEmail}
-              className="group relative overflow-hidden inline-flex items-center gap-4 h-12 px-7 border border-[var(--cobalt)] bg-[var(--cobalt)] text-[var(--paper)] hover:bg-[var(--ink)] hover:border-[var(--ink)] transition-colors duration-300 cursor-pointer"
+              className="group relative overflow-hidden inline-flex items-center gap-4 h-12 px-7 border border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--cobalt)] hover:border-[var(--cobalt)] transition-colors duration-300 cursor-pointer"
             >
               <span className="text-[15px] font-medium tracking-[-0.01em]">
                 {copied ? 'COPIED TO CLIPBOARD' : contact.email}
@@ -61,14 +61,14 @@ export function ContactFooterSection() {
           </div>
         </div>
 
-        {/* Bottom Cobalt Editorial Footer Bar */}
+        {/* Bottom Minimalist Footer Bar */}
         <div className="pt-6 border-t border-[var(--hairline)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <span className="lbl text-[var(--cobalt)]">
+          <span className="lbl text-[var(--ink)]">
             © 2026 {PROFILE.fullName.toUpperCase()}. ALL RIGHTS RESERVED.
           </span>
 
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 lbl text-[var(--cobalt)]">
+            <div className="flex items-center gap-2 lbl text-[var(--ink)]">
               {contact.socials.map((soc, idx) => (
                 <span key={soc.label} className="inline-flex items-center gap-2">
                   <a
@@ -76,7 +76,7 @@ export function ContactFooterSection() {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={soc.name}
-                    className="hover:opacity-65 transition-opacity"
+                    className="hover:text-[var(--cobalt)] transition-colors"
                   >
                     {soc.label}
                   </a>
@@ -91,7 +91,7 @@ export function ContactFooterSection() {
 
             <a
               href="#hero"
-              className="lbl text-[var(--ink)]/70 hover:text-[var(--cobalt)] transition-colors"
+              className="lbl text-[var(--muted)] hover:text-[var(--cobalt)] transition-colors"
             >
               BACK TO TOP ↑
             </a>

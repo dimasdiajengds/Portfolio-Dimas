@@ -22,29 +22,14 @@ export function HeroSection() {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-[100svh] w-full flex flex-col justify-between px-4 md:px-9 pt-28 md:pt-36 pb-8 md:pb-10 max-w-[1680px] mx-auto"
+      className="relative min-h-[100svh] w-full flex flex-col justify-between px-5 md:px-12 pt-32 md:pt-40 pb-8 md:pb-10 max-w-[1680px] mx-auto"
     >
-      {/* Top Meta Row */}
-      <div className="flex items-center justify-between gap-4 border-b border-[var(--hairline)] pb-5">
-        <span className="mask-line">
-          <span className="animate-mask-up lbl text-[var(--cobalt)]">
-            {PROFILE.eyebrow}
-          </span>
-        </span>
-        <span className="hidden sm:inline-flex items-center gap-2.5 lbl text-[var(--muted)]">
-          <span className="w-2 h-2 rounded-full bg-[var(--cobalt)]" />
-          <span>EDITION 2023 — 2026</span>
-        </span>
-      </div>
-
-      {/* Center: Live-Typing Hero Stage */}
-      <div className="my-auto py-12 md:py-16 max-w-[1160px]">
-        <p className="lbl text-[var(--muted)] mb-5">01 — OVERVIEW</p>
-
-        <h1 className="text-[clamp(36px,6.4vw,86px)] font-semibold leading-[1.03] tracking-[-0.03em] text-[var(--ink)]">
+      {/* Center: Minimalist Live-Typing Hero Stage */}
+      <div className="my-auto py-12 md:py-20 max-w-[1180px]">
+        <h1 className="text-[clamp(40px,7vw,92px)] font-bold leading-[1.02] tracking-[-0.035em] text-[var(--ink)]">
           <span className="block text-[var(--ink)]">{PROFILE.hero.staticPrefix}</span>
           <span
-            className="block min-h-[2.15em] sm:min-h-[1.15em] text-[var(--cobalt)] mt-1"
+            className="block min-h-[2.15em] sm:min-h-[1.12em] text-[var(--ink)]/75 mt-1"
             aria-live="polite"
           >
             {displayedText}
@@ -52,11 +37,11 @@ export function HeroSection() {
           </span>
         </h1>
 
-        <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
-          <div className="md:col-span-7">
+        <div className="mt-8 md:mt-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <div className="max-w-[46ch]">
             <span className="mask-line">
               <p
-                className="text-[17px] md:text-[19px] font-normal leading-[1.55] tracking-[-0.01em] text-[var(--ink)]/82 max-w-[54ch] transition-transform duration-700"
+                className="text-[18px] md:text-[21px] font-medium leading-[1.45] tracking-[-0.015em] text-[var(--muted)] transition-transform duration-700"
                 style={{
                   transform: hasTypedOnce ? 'translateY(0%)' : 'translateY(108%)',
                   transitionTimingFunction: 'var(--ease)',
@@ -67,17 +52,17 @@ export function HeroSection() {
             </span>
           </div>
 
-          <div className="md:col-span-5 flex flex-wrap items-center md:justify-end gap-3">
+          <div className="flex flex-wrap items-center gap-3.5">
             <a
               href={PROFILE.hero.primaryCta.href}
-              className="inline-flex items-center gap-3 h-11 px-6 rounded-full bg-[var(--cobalt)] text-[var(--paper)] lbl hover:bg-[var(--ink)] transition-colors duration-300"
+              className="inline-flex items-center gap-3 h-12 px-7 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[14px] font-semibold tracking-[-0.01em] hover:bg-[var(--cobalt)] transition-colors duration-300"
             >
               <span>{PROFILE.hero.primaryCta.label}</span>
               <span aria-hidden="true">↓</span>
             </a>
             <a
               href={PROFILE.hero.secondaryCta.href}
-              className="inline-flex items-center gap-2 h-11 px-6 rounded-full border border-[var(--rule)] text-[var(--ink)] lbl hover:border-[var(--cobalt)] hover:text-[var(--cobalt)] transition-colors duration-300"
+              className="inline-flex items-center gap-2 h-12 px-7 rounded-full border-[1.5px] border-[var(--ink)] text-[var(--ink)] text-[14px] font-semibold tracking-[-0.01em] hover:border-[var(--cobalt)] hover:text-[var(--cobalt)] transition-colors duration-300"
             >
               <span>{PROFILE.hero.secondaryCta.label}</span>
             </a>
@@ -87,19 +72,19 @@ export function HeroSection() {
 
       {/* Bottom Spatial Anchor Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[var(--hairline)] pt-5">
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-          <span className="lbl text-[var(--ink)]">{PROFILE.location}</span>
-          <span className="w-5 h-px bg-[var(--rule)]/40" />
-          <span className="lbl text-[var(--muted)]">{PROFILE.availability}</span>
+        <div className="flex items-center gap-3 text-[13px] font-medium text-[var(--muted)]">
+          <span className="w-2 h-2 rounded-full bg-[var(--cobalt)]" />
+          <span className="text-[var(--ink)] font-semibold">{PROFILE.location}</span>
+          <span>/</span>
+          <span>{PROFILE.availability}</span>
         </div>
 
         <a
           href="#projects"
-          className="inline-flex items-center gap-3 lbl text-[var(--cobalt)] hover:opacity-75 transition-opacity"
+          className="inline-flex items-center gap-2.5 text-[13px] font-semibold text-[var(--ink)] hover:text-[var(--cobalt)] transition-colors"
         >
-          <span>SCROLL TO VINYL SHELF</span>
-          <span className="w-8 h-px bg-[var(--cobalt)]" />
-          <span aria-hidden="true">02 ↓</span>
+          <span>Scroll to Projects</span>
+          <span aria-hidden="true">↓</span>
         </a>
       </div>
     </section>

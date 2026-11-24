@@ -36,7 +36,7 @@ export const PROJECTS: readonly ProjectItem[] = [
   {
     id: 'sebatik',
     index: 0,
-    code: 'D! — 01',
+    code: 'D! / 01',
     title: 'Sebatik',
     subtitle: 'INDONESIAN BATIK DIGITAL PLATFORM',
     year: 2023,
@@ -65,7 +65,7 @@ export const PROJECTS: readonly ProjectItem[] = [
   {
     id: 'skynet',
     index: 1,
-    code: 'D! — 02',
+    code: 'D! / 02',
     title: 'Skynet - Genesys Cloud',
     subtitle: 'GENESYS CLOUD CX INTEGRATION',
     year: 2023,
@@ -94,7 +94,7 @@ export const PROJECTS: readonly ProjectItem[] = [
   {
     id: 'psychobot',
     index: 2,
-    code: 'D! — 03',
+    code: 'D! / 03',
     title: 'Psychobot',
     subtitle: 'AI MENTAL HEALTH COMPANION',
     year: 2024,
@@ -123,7 +123,7 @@ export const PROJECTS: readonly ProjectItem[] = [
   {
     id: 'javaskripsi',
     index: 3,
-    code: 'D! — 04',
+    code: 'D! / 04',
     title: 'NATASHA',
     subtitle: 'PONDOK KOS MANAGEMENT SYSTEM',
     year: 2024,
@@ -152,7 +152,7 @@ export const PROJECTS: readonly ProjectItem[] = [
   {
     id: 'esc',
     index: 4,
-    code: 'D! — 05',
+    code: 'D! / 05',
     title: 'ESC - Echo Space Coffee',
     subtitle: 'COFFEE SHOP POS & BRAND EXPERIENCE',
     year: 2025,
@@ -181,7 +181,7 @@ export const PROJECTS: readonly ProjectItem[] = [
   {
     id: 'loghub',
     index: 5,
-    code: 'D! — 06',
+    code: 'D! / 06',
     title: 'LogHub',
     subtitle: 'CENTRALIZED LOGBOOK & JOURNAL HUB',
     year: 2025,
@@ -210,7 +210,7 @@ export const PROJECTS: readonly ProjectItem[] = [
   {
     id: 'grace',
     index: 6,
-    code: 'D! — 07',
+    code: 'D! / 07',
     title: 'Grace',
     subtitle: 'MODERN ENTERPRISE WORKSPACE',
     year: 2026,

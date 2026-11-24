@@ -42,8 +42,8 @@
   pointer-events: none;
   color: transparent;
   background-image:
-    radial-gradient(circle at 50% 50%, rgba(64, 82, 138, 0.55) 0 36%, transparent 40%),
-    linear-gradient(rgba(110, 122, 160, 0.26), rgba(110, 122, 160, 0.26));
+    radial-gradient(circle at 50% 50%, rgba(10, 10, 10, 0.22) 0 36%, transparent 40%),
+    linear-gradient(rgba(10, 10, 10, 0.06), rgba(10, 10, 10, 0.06));
   background-size: 3px 3px, 100% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -162,20 +162,21 @@
   margin-left: -21px;
   margin-top: -21px;
   border-radius: 9999px;
-  border: 1px solid var(--cobalt);
-  background: rgba(236, 232, 224, 0.85);
+  border: 1.5px solid var(--ink);
+  background: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 22;
-  color: var(--cobalt);
+  color: var(--ink);
   padding: 0;
   will-change: transform;
-  transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
+  transition: background-color 0.25s var(--ease), border-color 0.25s var(--ease), color 0.25s var(--ease);
 }
 
 .playRing:hover {
   background: var(--cobalt);
+  border-color: var(--cobalt);
   color: var(--paper);
 }
 
@@ -220,11 +221,11 @@
 
 .titleText {
   font-family: var(--font-inter-tight), system-ui, sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: clamp(28px, 3.4vw, 46px);
   line-height: 1.08;
-  letter-spacing: -0.015em;
-  color: var(--cobalt);
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
 .subText {
@@ -234,13 +235,13 @@
   line-height: 1.2;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--cobalt);
+  color: var(--muted);
 }
 
 .rule {
   width: 18px;
   height: 1px;
-  background-color: var(--cobalt);
+  background-color: var(--ink);
 }
 
 .yearText {
@@ -253,7 +254,7 @@
   color: var(--ink);
 }
 
-/* Left & Right Cobalt Arrow Buttons */
+/* Left & Right Arrow Buttons */
 .arrowBtn {
   position: absolute;
   top: calc(var(--cy) + var(--H) / 2 + 3.6vh + 6px);
@@ -262,11 +263,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--cobalt);
+  color: var(--ink);
   background: transparent;
   border: 0;
   z-index: 24;
-  transition: transform 0.25s var(--ease);
+  transition: transform 0.25s var(--ease), color 0.2s var(--ease);
+}
+
+.arrowBtn:hover {
+  color: var(--cobalt);
 }
 
 .arrowPrev {
@@ -301,27 +306,27 @@
   right: 0;
   top: 12px;
   height: 1px;
-  background-color: var(--cobalt);
-  opacity: 0.75;
+  background-color: var(--ink);
+  opacity: 0.45;
 }
 
 .tick {
   position: absolute;
   top: 6px;
   width: 1px;
-  background-color: var(--cobalt);
+  background-color: var(--ink);
   transform: translateX(-0.5px);
 }
 
 .tickMajor {
   height: 13px;
-  opacity: 0.75;
+  opacity: 0.65;
 }
 
 .tickMinor {
   top: 9px;
   height: 7px;
-  opacity: 0.4;
+  opacity: 0.28;
 }
 
 .yearLabel {
@@ -331,7 +336,7 @@
   font-weight: 500;
   font-size: 9.5px;
   letter-spacing: 0.08em;
-  color: var(--cobalt);
+  color: var(--ink);
   transform: translateX(-50%);
 }
 

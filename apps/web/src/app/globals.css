@@ -7,13 +7,13 @@
 }
 
 :root {
-  --paper: #ECE8E0;
-  --sheet: #F3F0EA;
-  --ink: #141414;
-  --muted: #6D6A63;
+  --paper: #FFFFFF;
+  --sheet: #F6F6F6;
+  --ink: #0A0A0A;
+  --muted: #666666;
   --cobalt: #1F3FB0;
-  --rule: rgba(20, 20, 20, 0.9);
-  --hairline: rgba(20, 20, 20, 0.12);
+  --rule: rgba(10, 10, 10, 0.9);
+  --hairline: rgba(10, 10, 10, 0.1);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-sheet: cubic-bezier(0.76, 0, 0.18, 1);
   --H: min(44vh, 29vw);

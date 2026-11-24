@@ -9,7 +9,7 @@ const interTight = Inter_Tight({
 });
 
 export const metadata: Metadata = {
-  title: 'Dimas Di Ajeng Duwi Saputra — Portfolio',
+  title: 'Dimas Di Ajeng Duwi Saputra | Portfolio',
   description:
     'Minimalist software engineering portfolio & interactive 3D Vinyl LP project showcase by Dimas Di Ajeng Duwi Saputra.',
 };
