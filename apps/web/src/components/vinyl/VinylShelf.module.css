@@ -1,0 +1,430 @@
+.section {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  min-height: 680px;
+  max-height: 1080px;
+  background-color: var(--paper);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  border-top: 1px solid var(--hairline);
+}
+
+/* Section subtle header indicator below fixed navbar */
+.sectionMeta {
+  position: absolute;
+  top: 84px;
+  left: 36px;
+  right: 36px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.sectionMetaHint {
+  color: var(--muted);
+}
+
+/* Giant Vertical Halftone Background Typography: PORT / FOLIO */
+.halftone {
+  position: absolute;
+  z-index: 1;
+  writing-mode: vertical-rl;
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  font-weight: 800;
+  font-size: min(19vh, 12.5vw);
+  line-height: 1.02;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  pointer-events: none;
+  color: transparent;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(64, 82, 138, 0.55) 0 36%, transparent 40%),
+    linear-gradient(rgba(110, 122, 160, 0.26), rgba(110, 122, 160, 0.26));
+  background-size: 3px 3px, 100% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.halftoneLeft {
+  left: 2.4vw;
+  top: 14vh;
+}
+
+.halftoneRight {
+  right: 2.4vw;
+  top: 10vh;
+}
+
+/* Soft Floor Shadow beneath the curved bowl shelf */
+.floorShadow {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--cy) + var(--H) * 0.49);
+  width: min(96vw, calc(var(--H) * 3.9));
+  height: calc(var(--H) * 0.24);
+  transform: translateX(-50%);
+  background: radial-gradient(
+    50% 50% at 50% 40%,
+    rgba(40, 32, 20, 0.28),
+    rgba(40, 32, 20, 0.09) 55%,
+    transparent 72%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Probe element used to measure computed --H cleanly */
+.probe {
+  position: absolute;
+  height: var(--H);
+  width: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* 3D Perspective Shelf Container */
+.shelf {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--cy) - var(--H) / 2 - 50px);
+  height: calc(var(--H) + 100px);
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
+  z-index: 10;
+  touch-action: pan-y;
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+/* Ultra-slim 3D Double-Sided Vinyl LP Item */
+.item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  --shade: 0;
+  will-change: transform;
+}
+
+.face {
+  position: absolute;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  pointer-events: auto;
+  filter: brightness(calc(1 - var(--shade) * 0.65));
+}
+
+/* Selective GPU drop-shadow ONLY on active/nearby records (60fps performance budget) */
+.item[data-near="1"] .face {
+  filter:
+    drop-shadow(0 24px 30px rgba(20, 16, 10, 0.28))
+    brightness(calc(1 - var(--shade) * 0.65));
+}
+
+.front {
+  background-size: 100% 100%;
+  background-position: 0 0;
+}
+
+.back {
+  background-size: 400% 200%;
+}
+
+/* Ultra-slim 5-8px real LP cardboard spine edge at left jacket boundary */
+.edge {
+  position: absolute;
+  backface-visibility: visible;
+  pointer-events: none;
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Play Ring on lower-left corner of active vinyl jacket */
+.playRing {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  margin-left: -21px;
+  margin-top: -21px;
+  border-radius: 9999px;
+  border: 1px solid var(--cobalt);
+  background: rgba(236, 232, 224, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 22;
+  color: var(--cobalt);
+  padding: 0;
+  will-change: transform;
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
+}
+
+.playRing:hover {
+  background: var(--cobalt);
+  color: var(--paper);
+}
+
+/* Caption Grid below active vinyl */
+.caption {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--cy) + var(--H) / 2 + 3.6vh);
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  z-index: 20;
+  text-align: center;
+  width: min(84vw, 660px);
+}
+
+.maskBox {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.titleMask {
+  min-height: clamp(34px, 4vw, 54px);
+}
+
+.subMask {
+  min-height: 14px;
+}
+
+.metaMask {
+  min-height: 15px;
+}
+
+.swapSpan {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.titleText {
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(28px, 3.4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--cobalt);
+}
+
+.subText {
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 9.5px;
+  line-height: 1.2;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cobalt);
+}
+
+.rule {
+  width: 18px;
+  height: 1px;
+  background-color: var(--cobalt);
+}
+
+.yearText {
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 10.5px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* Left & Right Cobalt Arrow Buttons */
+.arrowBtn {
+  position: absolute;
+  top: calc(var(--cy) + var(--H) / 2 + 3.6vh + 6px);
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cobalt);
+  background: transparent;
+  border: 0;
+  z-index: 24;
+  transition: transform 0.25s var(--ease);
+}
+
+.arrowPrev {
+  left: calc(50% - min(22vw, 290px) - 22px);
+}
+
+.arrowNext {
+  left: calc(50% + min(22vw, 290px) - 22px);
+}
+
+.arrowPrev:hover {
+  transform: translateX(-4px);
+}
+
+.arrowNext:hover {
+  transform: translateX(4px);
+}
+
+/* Timeline Ruler (2023 - 2026) */
+.timeline {
+  position: absolute;
+  left: 36px;
+  right: 36px;
+  bottom: 42px;
+  height: 40px;
+  z-index: 22;
+}
+
+.timelineLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 12px;
+  height: 1px;
+  background-color: var(--cobalt);
+  opacity: 0.75;
+}
+
+.tick {
+  position: absolute;
+  top: 6px;
+  width: 1px;
+  background-color: var(--cobalt);
+  transform: translateX(-0.5px);
+}
+
+.tickMajor {
+  height: 13px;
+  opacity: 0.75;
+}
+
+.tickMinor {
+  top: 9px;
+  height: 7px;
+  opacity: 0.4;
+}
+
+.yearLabel {
+  position: absolute;
+  top: 25px;
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--cobalt);
+  transform: translateX(-50%);
+}
+
+.yearLabelFirst {
+  transform: translateX(0);
+}
+
+.yearLabelLast {
+  transform: translateX(-100%);
+}
+
+.timelineDot {
+  position: absolute;
+  top: 12px;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  margin-top: -4.5px;
+  border-radius: 9999px;
+  background-color: var(--cobalt);
+  pointer-events: none;
+  will-change: left;
+}
+
+.timelineHit {
+  position: absolute;
+  inset: -6px 0;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* Bottom quick link to Section 03 */
+.shelfFooterBar {
+  position: absolute;
+  left: 36px;
+  right: 36px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 22;
+}
+
+/* Mobile Responsive (<= 767px) */
+@media (max-width: 767px) {
+  .section {
+    min-height: 620px;
+  }
+
+  .sectionMeta {
+    top: 70px;
+    left: 16px;
+    right: 16px;
+  }
+
+  .sectionMetaHint {
+    display: none;
+  }
+
+  .halftone {
+    font-size: 22vw;
+    opacity: 0.8;
+  }
+
+  .titleText {
+    font-size: 27px;
+  }
+
+  .arrowBtn {
+    top: auto;
+    bottom: 112px;
+  }
+
+  .arrowPrev {
+    left: 10px;
+  }
+
+  .arrowNext {
+    left: auto;
+    right: 10px;
+  }
+
+  .timeline {
+    left: 16px;
+    right: 16px;
+    bottom: 44px;
+  }
+
+  .shelfFooterBar {
+    left: 16px;
+    right: 16px;
+    bottom: 12px;
+  }
+}
