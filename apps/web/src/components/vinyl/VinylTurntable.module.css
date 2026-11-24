@@ -1,13 +1,4 @@
-/* Classic 1970s Walnut & Brushed-Aluminum Audiophile Turntable (100% GPU spin & S-tonearm) */
-
-@keyframes vinylSpin {
-  from {
-    transform: rotate(var(--vinyl-start-angle, 0deg));
-  }
-  to {
-    transform: rotate(calc(var(--vinyl-start-angle, 0deg) + 360deg));
-  }
-}
+/* Classic 1970s Walnut & Brushed-Aluminum Audiophile Turntable (GPU spin, drag-scratch, volume fader) */
 
 @keyframes platterLandSettle {
   0% {
@@ -101,8 +92,8 @@
 .platterWell {
   position: absolute;
   left: 5.5%;
-  top: 50%;
-  width: 68%;
+  top: 48.5%;
+  width: 67%;
   aspect-ratio: 1 / 1;
   transform: translateY(-50%);
   border-radius: 9999px;
@@ -132,7 +123,7 @@
 .strobeLamp {
   position: absolute;
   left: 4.4%;
-  bottom: 16%;
+  bottom: 16.5%;
   width: 11px;
   height: 11px;
   border-radius: 9999px;
@@ -151,31 +142,31 @@
     0 0 22px 4px rgba(245, 158, 11, 0.3);
 }
 
-/* Landing target container measured by VinylFlightOverlay */
+/* Interactive scratchable platter target measured by VinylFlightOverlay */
 .platterTarget {
   position: relative;
   width: 100%;
   height: 100%;
   border-radius: 9999px;
-  cursor: pointer;
+  cursor: grab;
+  touch-action: none;
+}
+
+.platterScratching {
+  cursor: grabbing;
 }
 
 .platterLanded {
   animation: platterLandSettle 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Rotating vinyl disc wrapper — pure GPU compositor animation */
+/* GPU-rotated vinyl disc wrapper (driven smoothly via single transform write for seamless spin <-> scratch) */
 .discSpinner {
   width: 100%;
   height: 100%;
   border-radius: 9999px;
   will-change: transform;
-  animation: vinylSpin 5.4s linear infinite;
-  animation-play-state: paused;
-}
-
-.discSpinning {
-  animation-play-state: running;
+  backface-visibility: hidden;
 }
 
 .discHidden {
@@ -287,63 +278,115 @@
   z-index: 3;
 }
 
-/* Classic Knurled Rotary Pitch Control Knob (Lower-Right) */
-.rotaryDial {
+/* Horizontal Classic Volume Fader (Lower-Right — slide left to decrease, right to increase) */
+.volumeControl {
   position: absolute;
-  right: 7.5%;
-  bottom: 24%;
-  width: 8.6%;
-  aspect-ratio: 1 / 1;
-  border-radius: 9999px;
-  background: radial-gradient(circle at 36% 32%, #f8f4ea 0%, #c6beb0 55%, #7e7669 100%);
-  border: 1.5px solid #5c5347;
-  box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.75),
-    0 4px 8px rgba(25, 14, 6, 0.3);
-  pointer-events: none;
+  right: 4.2%;
+  bottom: 4.5%;
+  width: 24.5%;
+  min-width: 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 9;
 }
 
-.rotaryDial::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 16%;
-  width: 2px;
-  height: 28%;
-  background: #2c241d;
-  transform: translateX(-50%);
-  border-radius: 1px;
-}
-
-.dialLabel {
-  position: absolute;
-  right: 5.5%;
-  bottom: 16.5%;
+.volumeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #4f4437;
+  color: #4a3f33;
+  line-height: 1;
+}
+
+.volumeTrackWrap {
+  position: relative;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.volumeGroove {
+  position: relative;
+  width: 100%;
+  height: 5px;
+  border-radius: 9999px;
+  background: #2b241e;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.75),
+    0 1px 0 rgba(255, 252, 245, 0.55);
+  overflow: hidden;
   pointer-events: none;
 }
 
-/* Classic Brushed-Aluminum Start/Stop Rocker Button (Lower-Left) */
+.volumeFill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #8c6432 0%, #d9942a 100%);
+  pointer-events: none;
+}
+
+.volumeThumbVisual {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 18px;
+  border-radius: 2px;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, #faf6ee 0%, #cbc2b2 55%, #9f9585 100%);
+  border: 1px solid #4d4438;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 2px 5px rgba(24, 14, 6, 0.35);
+  pointer-events: none;
+}
+
+.volumeThumbVisual::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 3px;
+  bottom: 3px;
+  width: 1.5px;
+  background: #2b231b;
+  transform: translateX(-50%);
+}
+
+/* Native accessible range overlay for buttery mouse, touch, and keyboard sliding */
+.volumeRangeInput {
+  position: absolute;
+  inset: -4px 0;
+  width: 100%;
+  height: calc(100% + 8px);
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  z-index: 2;
+}
+
+/* Classic Brushed-Aluminum Play / Stop Rocker Button (Lower-Left) */
 .powerBtn {
   position: absolute;
   left: 4.2%;
   bottom: 4.5%;
   height: 27px;
-  padding: 0 11px;
+  min-width: 72px;
+  padding: 0 12px;
   border-radius: 2px;
   border: 1px solid #6b6154;
   background: linear-gradient(180deg, #f3efe6 0%, #d4ccbe 100%);
   color: #241911;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
   font-family: var(--font-inter-tight), system-ui, sans-serif;
-  font-size: 9px;
+  font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -365,7 +408,7 @@
   width: 6px;
   height: 6px;
   border-radius: 9999px;
-  background: rgba(65, 48, 34, 0.3);
+  background: rgba(65, 48, 34, 0.32);
   transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -374,45 +417,31 @@
   box-shadow: 0 0 6px rgba(245, 158, 11, 0.85);
 }
 
-/* Engraved Vintage Brass / Ink Nameplate (Top-Left) */
-.modelTag {
-  position: absolute;
-  left: 4.2%;
-  top: 4.5%;
-  padding: 3px 7px;
-  background: linear-gradient(180deg, #2d231c 0%, #1a1410 100%);
-  border: 1px solid #967b52;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #ead7b1;
-  pointer-events: none;
-}
-
 @media (max-width: 640px) {
   .powerBtn {
     height: 23px;
-    padding: 0 8px;
-    font-size: 8px;
+    min-width: 62px;
+    padding: 0 9px;
+    font-size: 8.5px;
   }
 
-  .modelTag {
-    font-size: 7.5px;
-    padding: 2px 5px;
+  .volumeControl {
+    width: 28%;
+    min-width: 82px;
+    gap: 3px;
   }
 
-  .dialLabel {
-    display: none;
+  .volumeHeader {
+    font-size: 7px;
+  }
+
+  .volumeThumbVisual {
+    width: 11px;
+    height: 15px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .discSpinner {
-    animation: none !important;
-  }
-
   .tonearmPivot {
     transition: none;
   }

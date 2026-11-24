@@ -20,6 +20,8 @@ export interface ProjectItem {
   edgeColor: string;
   frontImage: string;
   backCell: readonly [col: number, row: number];
+  /** Optional per-project audio track URL (e.g. '/assets/audio/grace.mp3') for the Section 3 turntable */
+  audioSrc?: string;
   synopsis: string;
   challenge: string;
   solution: string;
@@ -238,4 +240,4 @@ export const PROJECTS: readonly ProjectItem[] = [
   },
 ];
 
-export const INITIAL_PROJECT_INDEX = 3; // Opens on NATASHA (center of 7 projects)
+export const INITIAL_PROJECT_INDEX = 6; // Opens on Grace (latest flagship project)

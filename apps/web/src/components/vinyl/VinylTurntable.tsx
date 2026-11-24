@@ -1,9 +1,16 @@
 'use client';
 
-import { type CSSProperties, useEffect, useId, useRef, useState } from 'react';
+import {
+  type PointerEvent as ReactPointerEvent,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import type { ProjectItem } from '@/data/projects';
 import { useInViewport } from '@/hooks/useInViewport';
 import { VinylDisc } from '@/components/vinyl/VinylDisc';
+import { TurntableAudioEngine } from '@/components/vinyl/turntableAudio';
 import styles from '@/components/vinyl/VinylTurntable.module.css';
 
 interface VinylTurntableProps {
@@ -16,6 +23,8 @@ interface VinylTurntableProps {
   startAngleDeg: number;
 }
 
+const SPIN_DEG_PER_SEC = 360 / 5.4; // Smooth 33 1/3 RPM cadence
+
 export function VinylTurntable({
   project,
   incomingFlight,
@@ -23,16 +32,75 @@ export function VinylTurntable({
   startAngleDeg,
 }: VinylTurntableProps) {
   const deckRef = useRef<HTMLDivElement | null>(null);
+  const discSpinnerRef = useRef<HTMLDivElement | null>(null);
   const inView = useInViewport(deckRef, '120px 0px');
   const armUid = useId().replace(/:/g, '');
 
+  // Playback, tonearm, scratch, & horizontal volume state
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isScratching, setIsScratching] = useState(false);
   const [tonearmEngaged, setTonearmEngaged] = useState(true);
   const [justLanded, setJustLanded] = useState(false);
+  const [volume, setVolume] = useState(72); // 0..100
+
+  // Continuous rotation angle ref (shared seamlessly between auto-spin & manual drag scratching)
+  const angleRef = useRef<number>(startAngleDeg);
+  const audioRef = useRef<TurntableAudioEngine | null>(null);
+  const scratchRef = useRef({
+    active: false,
+    pointerId: -1,
+    cx: 0,
+    cy: 0,
+    lastAngle: 0,
+    lastX: 0,
+    lastTime: 0,
+    smoothedVel: 0,
+  });
+
+  // Lazily create and cleanly dispose the Web Audio scratch + music track engine
+  useEffect(() => {
+    const engine = new TurntableAudioEngine();
+    engine.setVolume(0.72);
+    audioRef.current = engine;
+    return () => {
+      engine.dispose();
+      audioRef.current = null;
+    };
+  }, []);
+
+  // Sync per-project audio track URL whenever the active project changes
+  useEffect(() => {
+    audioRef.current?.setTrack(project.audioSrc);
+  }, [project.audioSrc]);
+
+  // Sync volume slider -> audio engine (controls both music & scratch SFX)
+  useEffect(() => {
+    audioRef.current?.setVolume(volume / 100);
+  }, [volume]);
+
+  // Sync active audio playback with Play/Stop, viewport visibility, and incoming flight
+  useEffect(() => {
+    const shouldAudioPlay = isPlaying && inView && !incomingFlight && !isScratching;
+    audioRef.current?.setPlaying(shouldAudioPlay);
+  }, [isPlaying, inView, incomingFlight, isScratching]);
+
+  // Latch exact handoff angle when a flying vinyl lands from Section 2
+  useEffect(() => {
+    angleRef.current = startAngleDeg;
+    if (discSpinnerRef.current) {
+      discSpinnerRef.current.style.transform = `rotate(${startAngleDeg.toFixed(2)}deg)`;
+    }
+  }, [landNonce, startAngleDeg]);
 
   // Sync tonearm & landing settle whenever a disc ejects from Section 2 and drops onto the platter
   useEffect(() => {
     if (incomingFlight) {
+      if (scratchRef.current.active) {
+        scratchRef.current.active = false;
+        scratchRef.current.pointerId = -1;
+        setIsScratching(false);
+        audioRef.current?.endScratch();
+      }
       setTonearmEngaged(false);
       setJustLanded(false);
       return;
@@ -56,28 +124,136 @@ export function VinylTurntable({
     setTonearmEngaged(true);
   }, [incomingFlight, landNonce, project.id]);
 
+  // Ultra-lightweight native-refresh-rate auto-spin loop (sleeps at 0% CPU when stopped, scratching, or off-screen)
+  useEffect(() => {
+    const shouldAutoSpin = isPlaying && inView && !incomingFlight && !isScratching;
+    if (!shouldAutoSpin) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) return;
+
+    let rafId = 0;
+    let lastTime = performance.now();
+
+    const tick = (now: number) => {
+      const dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
+      lastTime = now;
+
+      angleRef.current = (angleRef.current + SPIN_DEG_PER_SEC * dt) % 360;
+      if (discSpinnerRef.current) {
+        discSpinnerRef.current.style.transform = `rotate(${angleRef.current.toFixed(2)}deg)`;
+      }
+
+      rafId = window.requestAnimationFrame(tick);
+    };
+
+    rafId = window.requestAnimationFrame(tick);
+    return () => {
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
+  }, [isPlaying, inView, incomingFlight, isScratching]);
+
   const handleTogglePlay = () => {
     if (incomingFlight) return;
     setIsPlaying((prev) => {
       const next = !prev;
       setTonearmEngaged(next);
+      audioRef.current?.setPlaying(next && inView && !isScratching);
       return next;
     });
   };
 
-  // GPU spin runs ONLY when visible in viewport, playing, and disc is seated on platter
-  const shouldSpin = isPlaying && inView && !incomingFlight;
+  // Interactive Click & Drag Forward/Backward Vinyl Scratching
+  const handlePlatterPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (incomingFlight || e.button !== 0) return;
 
-  const spinnerStyle = {
-    '--vinyl-start-angle': `${startAngleDeg.toFixed(1)}deg`,
-  } as CSSProperties;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const cx = rect.left + rect.width * 0.5;
+    const cy = rect.top + rect.height * 0.5;
+    const startPtrAngle = Math.atan2(e.clientY - cy, e.clientX - cx) * (180 / Math.PI);
+
+    scratchRef.current = {
+      active: true,
+      pointerId: e.pointerId,
+      cx,
+      cy,
+      lastAngle: startPtrAngle,
+      lastX: e.clientX,
+      lastTime: performance.now(),
+      smoothedVel: 0,
+    };
+
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      // Ignore if pointer capture is unavailable
+    }
+
+    setIsScratching(true);
+    audioRef.current?.beginScratch();
+  };
+
+  const handlePlatterPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const s = scratchRef.current;
+    if (!s.active || s.pointerId !== e.pointerId) return;
+
+    const now = performance.now();
+    const dtSec = Math.max(0.008, (now - s.lastTime) / 1000);
+    const dxCenter = e.clientX - s.cx;
+    const dyCenter = e.clientY - s.cy;
+    const distFromCenter = Math.hypot(dxCenter, dyCenter);
+    const nextAngle = Math.atan2(dyCenter, dxCenter) * (180 / Math.PI);
+
+    let deltaDeg: number;
+    if (distFromCenter < 22) {
+      // Near spindle center: fall back to smooth horizontal drag so rotation never spikes erratically
+      deltaDeg = (e.clientX - s.lastX) * 0.9;
+    } else {
+      deltaDeg = nextAngle - s.lastAngle;
+      if (deltaDeg > 180) deltaDeg -= 360;
+      if (deltaDeg < -180) deltaDeg += 360;
+    }
+
+    s.lastAngle = nextAngle;
+    s.lastX = e.clientX;
+    s.lastTime = now;
+
+    angleRef.current = (angleRef.current + deltaDeg) % 360;
+    if (discSpinnerRef.current) {
+      discSpinnerRef.current.style.transform = `rotate(${angleRef.current.toFixed(2)}deg)`;
+    }
+
+    const rawVel = deltaDeg / dtSec;
+    s.smoothedVel = s.smoothedVel * 0.45 + rawVel * 0.55;
+    audioRef.current?.updateScratch(deltaDeg, s.smoothedVel);
+  };
+
+  const endScratchInteraction = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const s = scratchRef.current;
+    if (!s.active || s.pointerId !== e.pointerId) return;
+    s.active = false;
+    s.pointerId = -1;
+    s.smoothedVel = 0;
+
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {
+      // Ignore if capture was already released
+    }
+
+    setIsScratching(false);
+    audioRef.current?.endScratch();
+  };
+
+  const isLampOn = isPlaying && inView && !incomingFlight;
+  const buttonLabel = incomingFlight ? 'Loading' : isPlaying ? 'Stop' : 'Play';
 
   return (
     <div
       ref={deckRef}
       className={styles.deck}
       role="region"
-      aria-label={`Classic Turntable playing ${project.title}`}
+      aria-label={`Classic Turntable for ${project.title}`}
     >
       {/* Brushed Champagne-Aluminum Inner Deck Plate */}
       <div className={styles.topPlate}>
@@ -87,32 +263,31 @@ export function VinylTurntable({
         <span className={styles.cornerDot} style={{ left: 9, bottom: 9 }} aria-hidden="true" />
         <span className={styles.cornerDot} style={{ right: 9, bottom: 9 }} aria-hidden="true" />
 
-        {/* Classic Brass-Bordered Hi-Fi Nameplate */}
-        <span className={styles.modelTag}>D! HI-FI · MK-76</span>
-
-        {/* Warm Amber Vintage Strobe Lamp */}
+        {/* Warm Amber Vintage Strobe Pilot Lamp */}
         <span
-          className={`${styles.strobeLamp} ${shouldSpin ? styles.strobeLampOn : ''}`}
+          className={`${styles.strobeLamp} ${isLampOn ? styles.strobeLampOn : ''}`}
           aria-hidden="true"
         />
 
-        {/* Stepped Machined Aluminum Platter & Spinning Vinyl LP */}
+        {/* Stepped Machined Aluminum Platter & Interactive Scratchable Vinyl LP */}
         <div className={styles.platterWell}>
           <div className={styles.strobeRing} aria-hidden="true" />
 
           <div
             id="turntable-platter"
-            onClick={handleTogglePlay}
-            title={isPlaying ? 'Click to pause vinyl' : 'Click to spin vinyl'}
-            className={`${styles.platterTarget} ${justLanded ? styles.platterLanded : ''}`}
+            onPointerDown={handlePlatterPointerDown}
+            onPointerMove={handlePlatterPointerMove}
+            onPointerUp={endScratchInteraction}
+            onPointerCancel={endScratchInteraction}
+            title="Drag vinyl forward or backward to scratch"
+            className={`${styles.platterTarget} ${isScratching ? styles.platterScratching : ''} ${
+              justLanded ? styles.platterLanded : ''
+            }`}
           >
-            {/* Keyed by project.id + landNonce so CSS --vinyl-start-angle latches seamlessly on landing */}
             <div
-              key={`${project.id}-${landNonce}`}
-              style={spinnerStyle}
-              className={`${styles.discSpinner} ${shouldSpin ? styles.discSpinning : ''} ${
-                incomingFlight ? styles.discHidden : ''
-              }`}
+              ref={discSpinnerRef}
+              className={`${styles.discSpinner} ${incomingFlight ? styles.discHidden : ''}`}
+              style={{ transform: `rotate(${angleRef.current.toFixed(2)}deg)` }}
             >
               <VinylDisc project={project} />
             </div>
@@ -132,7 +307,7 @@ export function VinylTurntable({
         <button
           type="button"
           onClick={handleTogglePlay}
-          aria-label={isPlaying ? 'Lift tonearm and pause vinyl' : 'Drop tonearm and spin vinyl'}
+          aria-label={isPlaying ? 'Stop vinyl playback' : 'Play vinyl playback'}
           className={styles.tonearmMount}
         >
           <span className={styles.tonearmBaseRing} aria-hidden="true" />
@@ -158,7 +333,16 @@ export function VinylTurntable({
               </defs>
 
               {/* Rear Counterweight Cylinder & Brass Dial Ring */}
-              <rect x="30" y="6" width="20" height="26" rx="2.5" fill={`url(#chrome-${armUid})`} stroke="#453E35" strokeWidth="1" />
+              <rect
+                x="30"
+                y="6"
+                width="20"
+                height="26"
+                rx="2.5"
+                fill={`url(#chrome-${armUid})`}
+                stroke="#453E35"
+                strokeWidth="1"
+              />
               <rect x="31" y="25" width="18" height="4" fill={`url(#brass-${armUid})`} />
               <line x1="33" y1="12" x2="47" y2="12" stroke="#453E35" strokeOpacity="0.45" strokeWidth="1" />
               <line x1="33" y1="17" x2="47" y2="17" stroke="#453E35" strokeOpacity="0.45" strokeWidth="1" />
@@ -189,9 +373,7 @@ export function VinylTurntable({
                 <rect x="-7.5" y="-2" width="15" height="24" rx="2" fill="#1C1917" stroke="#5C5246" strokeWidth="1" />
                 <line x1="-3" y1="4" x2="-3" y2="15" stroke="#D6C5A3" strokeWidth="1.2" strokeLinecap="round" />
                 <line x1="3" y1="4" x2="3" y2="15" stroke="#D6C5A3" strokeWidth="1.2" strokeLinecap="round" />
-                {/* Cartridge Brass Collar */}
                 <rect x="-4.5" y="-5" width="9" height="4" rx="1" fill={`url(#brass-${armUid})`} />
-                {/* Curved Finger Lift Lever */}
                 <path
                   d="M 7.5 6 C 14 6, 17 3, 18 -1"
                   fill="none"
@@ -204,13 +386,7 @@ export function VinylTurntable({
           </span>
         </button>
 
-        {/* Classic Rotary Pitch / Speed Dial */}
-        <div className={styles.rotaryDial} aria-hidden="true" />
-        <span className={styles.dialLabel} aria-hidden="true">
-          PITCH · 33/45
-        </span>
-
-        {/* Tactile Aluminum Start / Stop Switch */}
+        {/* Tactile Aluminum Play / Stop Button (Bottom-Left) */}
         <button
           type="button"
           onClick={handleTogglePlay}
@@ -218,11 +394,39 @@ export function VinylTurntable({
           aria-pressed={isPlaying}
         >
           <span
-            className={`${styles.statusDot} ${shouldSpin ? styles.statusDotActive : ''}`}
+            className={`${styles.statusDot} ${isLampOn ? styles.statusDotActive : ''}`}
             aria-hidden="true"
           />
-          <span>{incomingFlight ? 'LOADING' : isPlaying ? '33 RPM · ON' : 'STOPPED'}</span>
+          <span>{buttonLabel}</span>
         </button>
+
+        {/* Horizontal Left <-> Right Volume Slider (Bottom-Right) */}
+        <div className={styles.volumeControl}>
+          <div className={styles.volumeHeader}>
+            <span>VOL</span>
+            <span>{volume}%</span>
+          </div>
+          <div className={styles.volumeTrackWrap}>
+            <div className={styles.volumeGroove}>
+              <div className={styles.volumeFill} style={{ width: `${volume}%` }} />
+            </div>
+            <div
+              className={styles.volumeThumbVisual}
+              style={{ left: `${volume}%` }}
+              aria-hidden="true"
+            />
+            <input
+              type="range"
+              min={0}
+              max={100}
+              step={1}
+              value={volume}
+              onChange={(e) => setVolume(Number(e.target.value))}
+              aria-label="Turntable volume"
+              className={styles.volumeRangeInput}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
