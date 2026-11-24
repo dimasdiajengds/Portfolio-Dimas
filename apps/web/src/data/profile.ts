@@ -2,9 +2,9 @@ export const PROFILE = {
   fullName: 'Dimas Di Ajeng Duwi Saputra',
   shortName: 'DIMAS SAPUTRA',
   brandMark: 'D!',
-  eyebrow: 'DIMAS DI AJENG DUWI SAPUTRA — SOFTWARE ENGINEER',
+  eyebrow: 'DIMAS DI AJENG DUWI SAPUTRA / SOFTWARE ENGINEER',
   location: 'Indonesia',
-  availability: 'Available for Select Projects & Full-Time Roles',
+  availability: 'Available for Select Projects',
   hero: {
     staticPrefix: 'Engineering',
     typingPhrases: [
@@ -12,10 +12,8 @@ export const PROFILE = {
       'fast interfaces that feel physical.',
       'reliable web & cloud architectures.',
     ],
-    subheadline:
-      '[PLACEHOLDER] Full-stack developer crafting minimalist web applications, cloud contact-center integrations, and expressive interactive interfaces—built with engineering rigor and zero clutter.',
     primaryCta: {
-      label: 'Explore Vinyl Projects',
+      label: 'Explore Projects',
       href: '#projects',
     },
     secondaryCta: {
@@ -24,9 +22,7 @@ export const PROFILE = {
     },
   },
   navLinks: [
-    { label: 'Overview', href: '#hero', id: 'hero' },
-    { label: 'Projects', href: '#projects', id: 'projects' },
-    { label: 'Details', href: '#project-detail', id: 'project-detail' },
+    { label: 'Project', href: '#projects', id: 'projects' },
     { label: 'About', href: '#about', id: 'about' },
     { label: 'Contact', href: '#contact', id: 'contact' },
   ],
@@ -35,7 +31,7 @@ export const PROFILE = {
     href: '#contact',
   },
   about: {
-    sectionLabel: '04 — ABOUT & EXPERIENCE',
+    sectionLabel: '04 / ABOUT & EXPERIENCE',
     headline:
       'Building software that balances architectural clarity with tactile, memorable craft.',
     paragraphs: [
@@ -44,7 +40,7 @@ export const PROFILE = {
     ],
     experiences: [
       {
-        period: '2025 — 2026',
+        period: '2025 - 2026',
         role: 'Full-Stack & Product Developer',
         org: 'Independent & Flagship Works (ESC · LogHub · Grace)',
         summary:
@@ -52,7 +48,7 @@ export const PROFILE = {
       },
       {
         period: '2024',
-        role: 'Lead Developer — Academic Thesis & AI Projects',
+        role: 'Lead Developer / Academic Thesis & AI Projects',
         org: 'NATASHA Pondok Kos · Psychobot',
         summary:
           '[PLACEHOLDER] Mengembangkan sistem manajemen berbasis Java OOP dan mengeksplorasi integrasi percakapan AI untuk aplikasi screening psikologi.',
@@ -60,7 +56,7 @@ export const PROFILE = {
       {
         period: '2023',
         role: 'Cloud & Contact Center Engineer (MSIB)',
-        org: 'Solutif — Genesys Cloud CX (Skynet) · Sebatik',
+        org: 'Solutif / Genesys Cloud CX (Skynet) · Sebatik',
         summary:
           '[PLACEHOLDER] Berkontribusi pada implementasi alur contact center Genesys Cloud melalui program MSIB Kampus Merdeka serta pengembangan platform katalog digital Sebatik.',
       },
@@ -81,7 +77,7 @@ export const PROFILE = {
     ],
   },
   contact: {
-    sectionLabel: '05 — CONTACT',
+    sectionLabel: '05 / CONTACT',
     headline: "Let's build something thoughtful together.",
     subtext:
       '[PLACEHOLDER] Terbuka untuk peluang kerja full-time, kolaborasi produk, maupun proyek pengembangan web & cloud. Klik email di bawah untuk menyalin langsung.',

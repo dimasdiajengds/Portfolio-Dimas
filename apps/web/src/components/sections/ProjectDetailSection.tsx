@@ -34,8 +34,8 @@ export function ProjectDetailSection({
         {/* Top Utility & Project Switcher Bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[var(--hairline)]">
           <div className="flex items-center gap-4">
-            <span className="lbl text-[var(--cobalt)]">03 — PROJECT DETAIL</span>
-            <span className="w-6 h-px bg-[var(--cobalt)]/45" />
+            <span className="lbl text-[var(--ink)]">03 / PROJECT DETAIL</span>
+            <span className="w-6 h-px bg-[var(--ink)]/30" />
             <span className="lbl text-[var(--muted)]">
               {project.code} / 0{PROJECTS.length}
             </span>
@@ -64,7 +64,7 @@ export function ProjectDetailSection({
             </button>
             <a
               href="#projects"
-              className="inline-flex items-center h-8 px-3 border border-[var(--cobalt)] text-[var(--cobalt)] lbl hover:bg-[var(--cobalt)] hover:text-[var(--paper)] transition-colors"
+              className="inline-flex items-center h-8 px-3 border border-[var(--ink)] text-[var(--ink)] lbl hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors"
             >
               ↑ BACK TO SHELF
             </a>
@@ -75,7 +75,7 @@ export function ProjectDetailSection({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 pt-12 md:pt-16 items-start">
           {/* Right Column comes FIRST on phones (order-1 lg:order-2) */}
           <div className="order-1 lg:order-2 lg:col-span-6 lg:sticky lg:top-28">
-            <div className="relative flex flex-col items-center justify-center py-6 md:py-10 border border-[var(--hairline)] bg-[var(--paper)]/55 px-4 sm:px-8">
+            <div className="relative flex flex-col items-center justify-center py-6 md:py-10 border border-[var(--hairline)] bg-[var(--paper)] px-4 sm:px-8">
               <div className="w-full flex items-center justify-between mb-6">
                 <span className="lbl text-[var(--muted)]">
                   {showBackPreview ? 'VINYL BACK EDITION (B-SIDE)' : 'VINYL EDITION (A-SIDE)'}
@@ -83,7 +83,7 @@ export function ProjectDetailSection({
                 <button
                   type="button"
                   onClick={() => setShowBackPreview((v) => !v)}
-                  className="lbl text-[var(--cobalt)] border border-[var(--cobalt)]/50 px-3 py-1.5 hover:bg-[var(--cobalt)] hover:text-[var(--paper)] transition-colors cursor-pointer bg-transparent"
+                  className="lbl text-[var(--ink)] border border-[var(--ink)]/35 px-3 py-1.5 hover:border-[var(--cobalt)] hover:bg-[var(--cobalt)] hover:text-[var(--paper)] transition-colors cursor-pointer bg-transparent"
                 >
                   {showBackPreview ? 'SHOW FRONT ↺' : 'FLIP BACK ↻'}
                 </button>
@@ -137,7 +137,7 @@ export function ProjectDetailSection({
           >
             <span className="mask-line">
               <span
-                className="animate-mask-up lbl text-[var(--cobalt)]"
+                className="animate-mask-up lbl text-[var(--muted)]"
                 style={{ animationDelay: '60ms' }}
               >
                 {project.subtitle} · {project.code}
@@ -146,7 +146,7 @@ export function ProjectDetailSection({
 
             <span className="mask-line">
               <h2
-                className="animate-mask-up font-semibold tracking-[-0.03em] leading-[1.02] text-[var(--cobalt)] text-[clamp(40px,5.2vw,76px)]"
+                className="animate-mask-up font-bold tracking-[-0.03em] leading-[1.02] text-[var(--ink)] text-[clamp(40px,5.2vw,76px)]"
                 style={{ animationDelay: '130ms' }}
               >
                 {project.title}
@@ -164,7 +164,7 @@ export function ProjectDetailSection({
 
             <span className="mask-line">
               <p
-                className="animate-mask-up font-serif-editorial text-[18px] leading-[1.6] text-[var(--ink)] max-w-[46ch]"
+                className="animate-mask-up text-[17px] md:text-[18px] font-normal leading-[1.6] tracking-[-0.01em] text-[var(--ink)] max-w-[48ch]"
                 style={{ animationDelay: '270ms' }}
               >
                 {project.synopsis}
@@ -174,14 +174,14 @@ export function ProjectDetailSection({
             {/* Challenge & Solution Hairline Blocks */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-[var(--hairline)]">
               <div>
-                <h3 className="lbl text-[var(--cobalt)] mb-2">CHALLENGE</h3>
-                <p className="font-serif-editorial text-[15.5px] leading-[1.55] text-[var(--ink)]/85">
+                <h3 className="lbl text-[var(--ink)] mb-2">CHALLENGE</h3>
+                <p className="text-[15px] font-normal leading-[1.55] tracking-[-0.005em] text-[var(--ink)]/80">
                   {project.challenge}
                 </p>
               </div>
               <div>
-                <h3 className="lbl text-[var(--cobalt)] mb-2">SOLUTION</h3>
-                <p className="font-serif-editorial text-[15.5px] leading-[1.55] text-[var(--ink)]/85">
+                <h3 className="lbl text-[var(--ink)] mb-2">SOLUTION</h3>
+                <p className="text-[15px] font-normal leading-[1.55] tracking-[-0.005em] text-[var(--ink)]/80">
                   {project.solution}
                 </p>
               </div>
@@ -189,23 +189,23 @@ export function ProjectDetailSection({
 
             {/* Key Highlights */}
             <div className="pt-4 border-t border-[var(--hairline)]">
-              <h3 className="lbl text-[var(--cobalt)] mb-3">KEY HIGHLIGHTS</h3>
+              <h3 className="lbl text-[var(--ink)] mb-3">KEY HIGHLIGHTS</h3>
               <ul className="space-y-2.5 m-0 p-0 list-none">
                 {project.highlights.map((item, idx) => (
                   <li
                     key={idx}
-                    className="flex items-start gap-3 font-serif-editorial text-[16px] leading-[1.5] text-[var(--ink)]/90"
+                    className="flex items-start gap-3 text-[15.5px] font-normal leading-[1.5] tracking-[-0.005em] text-[var(--ink)]/88"
                   >
-                    <span className="lbl text-[var(--cobalt)] pt-[5px]">0{idx + 1}</span>
+                    <span className="lbl text-[var(--cobalt)] pt-[6px]">0{idx + 1}</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Curated Tech Stack (Editorial Hairline List — Anti-AI-Slop) */}
+            {/* Curated Tech Stack */}
             <div className="pt-4 border-t border-[var(--hairline)]">
-              <h3 className="lbl text-[var(--cobalt)] mb-3">TECH STACK</h3>
+              <h3 className="lbl text-[var(--ink)] mb-3">TECH STACK</h3>
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
                 {project.techStack.map((tech, idx) => (
                   <span key={tech} className="inline-flex items-center gap-5">
@@ -222,23 +222,23 @@ export function ProjectDetailSection({
               </div>
             </div>
 
-            {/* Italic Credit */}
-            <p className="font-serif-editorial italic text-[15px] text-[var(--muted)] pt-2">
+            {/* Author Credit */}
+            <p className="text-[14px] font-normal tracking-[-0.005em] text-[var(--muted)] pt-2">
               Designed &amp; developed by Dimas Di Ajeng Duwi Saputra.
             </p>
 
-            {/* Primary Cobalt-Bordered Action Buttons */}
+            {/* Primary Black-White Action Buttons (Cobalt on hover) */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <a
                 href={project.demoUrl}
-                className="inline-flex items-center justify-center gap-2.5 h-[44px] px-6 border border-[var(--cobalt)] bg-[var(--cobalt)] text-[var(--paper)] lbl hover:bg-[var(--ink)] hover:border-[var(--ink)] transition-colors duration-300"
+                className="inline-flex items-center justify-center gap-2.5 h-[44px] px-6 border border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] lbl hover:bg-[var(--cobalt)] hover:border-[var(--cobalt)] transition-colors duration-300"
               >
                 <span>VIEW PROJECT</span>
                 <span aria-hidden="true">↗</span>
               </a>
               <a
                 href={project.repoUrl}
-                className="inline-flex items-center justify-center gap-2.5 h-[44px] px-6 border border-[var(--cobalt)] text-[var(--cobalt)] lbl hover:bg-[var(--cobalt)] hover:text-[var(--paper)] transition-colors duration-300"
+                className="inline-flex items-center justify-center gap-2.5 h-[44px] px-6 border border-[var(--ink)] text-[var(--ink)] lbl hover:border-[var(--cobalt)] hover:text-[var(--cobalt)] transition-colors duration-300"
               >
                 <span>SOURCE / CASE NOTES</span>
                 <span aria-hidden="true">↗</span>

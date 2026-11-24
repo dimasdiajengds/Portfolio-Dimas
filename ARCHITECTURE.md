@@ -1,7 +1,7 @@
-# Technical Architecture & Monorepo Blueprint — Portfolio Dimas Saputra
+﻿# Technical Architecture & Monorepo Blueprint - Portfolio Dimas Saputra
 
 > **Stack Utama:** Next.js (App Router) + TypeScript + Tailwind CSS v4 + Dedicated CSS Module (`VinylShelf.module.css`)  
-> **Arsitektur Repository:** Monorepo (`pnpm workspaces`) — semua aplikasi, dokumentasi, dan aset mentah tertata rapi dalam 1 repo ini.  
+> **Arsitektur Repository:** Monorepo (`pnpm workspaces`) - semua aplikasi, dokumentasi, dan aset mentah tertata rapi dalam 1 repo ini.  
 > **Target Performa:** `60fps` stabil pada animasi 3D Vinyl, `LCP < 1.8s`, `CLS = 0`, `0%` CPU idle saat 3D di luar layar.
 
 ---
@@ -36,7 +36,7 @@ e:\PORTO\Porto serius\
 │       │   └── cv/                   # (Opsional) File CV PDF
 │       └── src/
 │           ├── app/
-│           │   ├── layout.tsx        # Self-hosted Inter Tight & Newsreader (next/font), Paper Grain, Global Navbar
+│           │   ├── layout.tsx        # Self-hosted Inter Tight (next/font), Paper Grain, Global Navbar
 │           │   ├── page.tsx          # Main Portfolio Page (orchestrates Sections 01 -> 05)
 │           │   ├── globals.css       # Locked CSS tokens (--paper, --sheet, --ink, --cobalt, --rule)
 │           │   └── (future-phase2)/  # Reserved routes: /certifications, /journal
@@ -81,7 +81,7 @@ e:\PORTO\Porto serius\
     └── vinyl-renders/                # Souce/Jadi/ (JPG asli + PNG mentah + PNG Compress)
 ```
 
-> **Catatan Pemindahan File:** File lama (`Souce/`, `BRAINSTORMING.txt`, `project kita.txt`, `Prompt isi layout.txt`, `prompt.md`, `propmt generate.md`) **tidak akan dihapus** — saat scaffolding monorepo dijalankan, seluruhnya hanya dipindahkan rapi ke `docs/` dan `assets-raw/` agar root tetap bersih dan zero data hilang.
+> **Catatan Pemindahan File:** File lama (`Souce/`, `BRAINSTORMING.txt`, `project kita.txt`, `Prompt isi layout.txt`, `prompt.md`, `propmt generate.md`) **tidak akan dihapus** - saat scaffolding monorepo dijalankan, seluruhnya hanya dipindahkan rapi ke `docs/` dan `assets-raw/` agar root tetap bersih dan zero data hilang.
 
 ---
 
@@ -129,7 +129,7 @@ Karena Section 02 menampilkan **35 virtual slim 3D vinyl cards** (`7 projects ×
 
 ### 3.1 Zero Heavy Runtime Dependencies
 - **Tidak memakai Three.js, React Three Fiber, atau GSAP.**
-- Seluruh 3D shelf berjalan di atas **1 fungsi `requestAnimationFrame` tunggal** yang langsung memutasi `element.style.transform` dan CSS custom property `--shade` via DOM refs (`useRef<HTMLDivElement[]>`) — **0 React re-render per frame!**
+- Seluruh 3D shelf berjalan di atas **1 fungsi `requestAnimationFrame` tunggal** yang langsung memutasi `element.style.transform` dan CSS custom property `--shade` via DOM refs (`useRef<HTMLDivElement[]>`) - **0 React re-render per frame!**
 - React state hanya di-update **1 kali saat `activeIndex` berubah** (untuk *mask-slide* caption & sinkronisasi Section 03).
 
 ### 3.2 Viewport-Gated `requestAnimationFrame` (`IntersectionObserver`)
@@ -159,7 +159,7 @@ Saat migrasi ke `apps/web/public/assets/vinyl/`, kita akan menjalankan skrip opt
 ```ts
 export interface ProjectItem {
   id: 'sebatik' | 'skynet' | 'psychobot' | 'javaskripsi' | 'esc' | 'loghub' | 'grace';
-  code: string;               // e.g. "D! — 01"
+  code: string;               // e.g. "D! - 01"
   title: string;              // e.g. "Sebatik"
   subtitle: string;           // e.g. "INDONESIAN BATIK DIGITAL PLATFORM"
   year: number;               // e.g. 2023
@@ -182,6 +182,6 @@ export interface ProjectItem {
 
 ## 5. Build, Fonts & Deployment Strategy
 
-- **Fonts (`next/font/google`):** `Inter_Tight` (weights `500`, `600`, `800`) dan `Newsreader` (weight `400`, styles `normal` & `italic`), `display: 'swap'` / `'block'`, subset `latin` — di-self-host otomatis oleh Next.js tanpa request eksternal saat runtime.
+- **Fonts (`next/font/google`):** `Inter_Tight` (variable weights `400`–`800`), `display: 'swap'`, subset `latin` - di-self-host otomatis oleh Next.js tanpa request eksternal saat runtime.
 - **Static Rendering:** Halaman utama (`page.tsx`) dapat di-prerender statis (SSG) sehingga TTFB nyaris instan saat di-deploy ke **Vercel** atau **Cloudflare Pages**.
 - **Future Phase 2 Extensibility:** Struktur App Router langsung mendukung penambahan `src/app/certifications/page.tsx` dan `src/app/journal/page.tsx` tanpa merombak komponen inti.

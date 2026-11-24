@@ -11,14 +11,14 @@ export function AboutSection() {
     >
       <div className="max-w-[1520px] mx-auto">
         <div className="pb-6 border-b border-[var(--hairline)] flex items-center justify-between">
-          <span className="lbl text-[var(--cobalt)]">{about.sectionLabel}</span>
+          <span className="lbl text-[var(--ink)]">{about.sectionLabel}</span>
           <span className="lbl text-[var(--muted)]">{PROFILE.fullName.toUpperCase()}</span>
         </div>
 
-        {/* Asymmetric 4:8 Editorial Bio Row */}
+        {/* Asymmetric 4:8 Bio Row */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pt-14 pb-20 border-b border-[var(--hairline)]">
           <div className="lg:col-span-4">
-            <h2 className="text-[clamp(28px,3.2vw,44px)] font-semibold leading-[1.12] tracking-[-0.025em] text-[var(--ink)]">
+            <h2 className="text-[clamp(28px,3.2vw,44px)] font-bold leading-[1.1] tracking-[-0.025em] text-[var(--ink)]">
               {about.headline}
             </h2>
           </div>
@@ -27,7 +27,7 @@ export function AboutSection() {
             {about.paragraphs.map((text, idx) => (
               <p
                 key={idx}
-                className="font-serif-editorial text-[19px] md:text-[21px] leading-[1.6] text-[var(--ink)]/88 max-w-[58ch]"
+                className="text-[18px] md:text-[20px] font-normal leading-[1.58] tracking-[-0.01em] text-[var(--ink)]/85 max-w-[58ch]"
               >
                 {text}
               </p>
@@ -35,11 +35,11 @@ export function AboutSection() {
           </div>
         </div>
 
-        {/* Experience Timeline (Hairline Editorial Rows) */}
+        {/* Experience Timeline (Hairline Rows) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 py-20 border-b border-[var(--hairline)]">
           <div className="lg:col-span-4">
-            <span className="lbl text-[var(--cobalt)]">EXPERIENCE TIMELINE</span>
-            <p className="font-serif-editorial text-[16px] leading-[1.55] text-[var(--muted)] mt-3 max-w-[30ch]">
+            <span className="lbl text-[var(--ink)]">EXPERIENCE TIMELINE</span>
+            <p className="text-[15px] font-normal leading-[1.55] tracking-[-0.005em] text-[var(--muted)] mt-3 max-w-[30ch]">
               Key roles, industry programs, and flagship builds from 2023 to 2026.
             </p>
           </div>
@@ -58,7 +58,7 @@ export function AboutSection() {
                     {exp.role}
                   </h3>
                   <p className="lbl text-[var(--muted)] mt-1.5">{exp.org}</p>
-                  <p className="font-serif-editorial text-[16.5px] leading-[1.55] text-[var(--ink)]/82 mt-3 max-w-[56ch]">
+                  <p className="text-[15.5px] font-normal leading-[1.55] tracking-[-0.005em] text-[var(--ink)]/82 mt-3 max-w-[56ch]">
                     {exp.summary}
                   </p>
                 </div>
@@ -67,11 +67,11 @@ export function AboutSection() {
           </div>
         </div>
 
-        {/* Capabilities & Stack (Clean 3-Column Hairline List — Zero Progress Bars) */}
+        {/* Capabilities & Stack (Clean 3-Column Hairline List) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pt-20">
           <div className="lg:col-span-4">
-            <span className="lbl text-[var(--cobalt)]">CAPABILITIES &amp; STACK</span>
-            <p className="font-serif-editorial text-[16px] leading-[1.55] text-[var(--muted)] mt-3 max-w-[30ch]">
+            <span className="lbl text-[var(--ink)]">CAPABILITIES &amp; STACK</span>
+            <p className="text-[15px] font-normal leading-[1.55] tracking-[-0.005em] text-[var(--muted)] mt-3 max-w-[30ch]">
               Focused tooling chosen for clarity, speed, and maintainability.
             </p>
           </div>
@@ -84,7 +84,7 @@ export function AboutSection() {
                   {group.items.map((item) => (
                     <li
                       key={item}
-                      className="text-[15px] text-[var(--ink)]/82 leading-[1.45]"
+                      className="text-[15px] font-normal tracking-[-0.005em] text-[var(--ink)]/82 leading-[1.45]"
                     >
                       {item}
                     </li>

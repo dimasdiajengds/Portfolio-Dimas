@@ -204,7 +204,7 @@ export function VinylShowcaseSection({
     swapMaskText(subMaskRef.current, `${p.subtitle} / ${p.code}`, styles.subText, 1, true);
     swapMaskText(
       metaMaskRef.current,
-      `${p.year} — ${p.theme.toUpperCase()}`,
+      `${p.year} / ${p.theme.toUpperCase()}`,
       styles.yearText,
       1,
       true,
@@ -421,7 +421,7 @@ export function VinylShowcaseSection({
         );
         swapMaskText(
           metaMaskRef.current,
-          `${proj.year} — ${proj.theme.toUpperCase()}`,
+          `${proj.year} / ${proj.theme.toUpperCase()}`,
           styles.yearText,
           swapDir,
           reducedMotion,
@@ -689,7 +689,7 @@ export function VinylShowcaseSection({
 
       {/* Section Top Metadata */}
       <div className={styles.sectionMeta}>
-        <span className="lbl text-[var(--cobalt)]">02 — SELECTED VINYL PROJECTS</span>
+        <span className="lbl text-[var(--ink)]">02 / SELECTED VINYL PROJECTS</span>
         <span className={`lbl ${styles.sectionMetaHint}`}>
           DRAG OR USE ← / → TO SPIN · CLICK CENTER VINYL TO OPEN DETAILS
         </span>
@@ -905,7 +905,7 @@ export function VinylShowcaseSection({
           onPointerLeave={() => {
             pointerRef.current.mode = 'default';
           }}
-          className="lbl text-[var(--cobalt)] bg-transparent border-0 p-0 hover:opacity-75 transition-opacity"
+          className="lbl text-[var(--ink)] bg-transparent border-0 p-0 hover:text-[var(--cobalt)] transition-colors"
         >
           OPEN CASE STUDY IN SECTION 03 ↓
         </button>

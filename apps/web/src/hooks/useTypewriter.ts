@@ -22,6 +22,7 @@ export function useTypewriter({
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [hasCompletedFirst, setHasCompletedFirst] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -39,6 +40,9 @@ export function useTypewriter({
     let delay = isDeleting ? deleteSpeedMs : typeSpeedMs;
 
     if (!isDeleting && charCount === current.length) {
+      if (!hasCompletedFirst) {
+        setHasCompletedFirst(true);
+      }
       delay = pauseAfterTypeMs;
     } else if (isDeleting && charCount === 0) {
       delay = pauseAfterDeleteMs;
@@ -66,6 +70,7 @@ export function useTypewriter({
     active,
     charCount,
     deleteSpeedMs,
+    hasCompletedFirst,
     isDeleting,
     pauseAfterDeleteMs,
     pauseAfterTypeMs,
@@ -78,6 +83,7 @@ export function useTypewriter({
   const currentPhrase = phrases[phraseIndex % phrases.length] ?? '';
   const displayedText = reducedMotion ? phrases[0] ?? '' : currentPhrase.slice(0, charCount);
   const hasTypedOnce = reducedMotion || charCount > 6 || phraseIndex > 0;
+  const revealed = reducedMotion || hasCompletedFirst;
 
-  return { displayedText, hasTypedOnce, reducedMotion };
+  return { displayedText, hasTypedOnce, hasCompletedFirst: revealed, reducedMotion };
 }
