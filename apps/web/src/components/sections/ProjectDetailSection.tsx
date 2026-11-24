@@ -164,7 +164,7 @@ export function ProjectDetailSection({
 
             <span className="mask-line">
               <p
-                className="animate-mask-up font-serif-editorial text-[18px] leading-[1.6] text-[var(--ink)] max-w-[46ch]"
+                className="animate-mask-up text-[17px] md:text-[18px] font-normal leading-[1.6] tracking-[-0.01em] text-[var(--ink)] max-w-[48ch]"
                 style={{ animationDelay: '270ms' }}
               >
                 {project.synopsis}
@@ -175,13 +175,13 @@ export function ProjectDetailSection({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-[var(--hairline)]">
               <div>
                 <h3 className="lbl text-[var(--cobalt)] mb-2">CHALLENGE</h3>
-                <p className="font-serif-editorial text-[15.5px] leading-[1.55] text-[var(--ink)]/85">
+                <p className="text-[15px] font-normal leading-[1.55] tracking-[-0.005em] text-[var(--ink)]/85">
                   {project.challenge}
                 </p>
               </div>
               <div>
                 <h3 className="lbl text-[var(--cobalt)] mb-2">SOLUTION</h3>
-                <p className="font-serif-editorial text-[15.5px] leading-[1.55] text-[var(--ink)]/85">
+                <p className="text-[15px] font-normal leading-[1.55] tracking-[-0.005em] text-[var(--ink)]/85">
                   {project.solution}
                 </p>
               </div>
@@ -194,9 +194,9 @@ export function ProjectDetailSection({
                 {project.highlights.map((item, idx) => (
                   <li
                     key={idx}
-                    className="flex items-start gap-3 font-serif-editorial text-[16px] leading-[1.5] text-[var(--ink)]/90"
+                    className="flex items-start gap-3 text-[15.5px] font-normal leading-[1.5] tracking-[-0.005em] text-[var(--ink)]/90"
                   >
-                    <span className="lbl text-[var(--cobalt)] pt-[5px]">0{idx + 1}</span>
+                    <span className="lbl text-[var(--cobalt)] pt-[6px]">0{idx + 1}</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -222,8 +222,8 @@ export function ProjectDetailSection({
               </div>
             </div>
 
-            {/* Italic Credit */}
-            <p className="font-serif-editorial italic text-[15px] text-[var(--muted)] pt-2">
+            {/* Author Credit */}
+            <p className="text-[14px] font-normal tracking-[-0.005em] text-[var(--muted)] pt-2">
               Designed &amp; developed by Dimas Di Ajeng Duwi Saputra.
             </p>
 

@@ -51,7 +51,7 @@ export function GlobalNavbar() {
         }`}
       >
         <div className="h-[60px] md:h-[68px] px-4 md:px-9 flex items-center justify-between max-w-[1680px] mx-auto">
-          {/* Left: Minimalist Brand (antigravity.google clarity + D! identity) */}
+          {/* Left: Minimalist Brand (D! identity) */}
           <a
             href="#hero"
             className="flex items-center gap-3 text-[var(--cobalt)] group focus:outline-none"

@@ -36,7 +36,7 @@ e:\PORTO\Porto serius\
 │       │   └── cv/                   # (Opsional) File CV PDF
 │       └── src/
 │           ├── app/
-│           │   ├── layout.tsx        # Self-hosted Inter Tight & Newsreader (next/font), Paper Grain, Global Navbar
+│           │   ├── layout.tsx        # Self-hosted Inter Tight (next/font), Paper Grain, Global Navbar
 │           │   ├── page.tsx          # Main Portfolio Page (orchestrates Sections 01 -> 05)
 │           │   ├── globals.css       # Locked CSS tokens (--paper, --sheet, --ink, --cobalt, --rule)
 │           │   └── (future-phase2)/  # Reserved routes: /certifications, /journal
@@ -182,6 +182,6 @@ export interface ProjectItem {
 
 ## 5. Build, Fonts & Deployment Strategy
 
-- **Fonts (`next/font/google`):** `Inter_Tight` (weights `500`, `600`, `800`) dan `Newsreader` (weight `400`, styles `normal` & `italic`), `display: 'swap'` / `'block'`, subset `latin` — di-self-host otomatis oleh Next.js tanpa request eksternal saat runtime.
+- **Fonts (`next/font/google`):** `Inter_Tight` (variable weights `400`–`800`), `display: 'swap'`, subset `latin` — di-self-host otomatis oleh Next.js tanpa request eksternal saat runtime.
 - **Static Rendering:** Halaman utama (`page.tsx`) dapat di-prerender statis (SSG) sehingga TTFB nyaris instan saat di-deploy ke **Vercel** atau **Cloudflare Pages**.
 - **Future Phase 2 Extensibility:** Struktur App Router langsung mendukung penambahan `src/app/certifications/page.tsx` dan `src/app/journal/page.tsx` tanpa merombak komponen inti.

@@ -27,7 +27,7 @@ export function AboutSection() {
             {about.paragraphs.map((text, idx) => (
               <p
                 key={idx}
-                className="font-serif-editorial text-[19px] md:text-[21px] leading-[1.6] text-[var(--ink)]/88 max-w-[58ch]"
+                className="text-[18px] md:text-[20px] font-normal leading-[1.58] tracking-[-0.01em] text-[var(--ink)]/88 max-w-[58ch]"
               >
                 {text}
               </p>
@@ -39,7 +39,7 @@ export function AboutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 py-20 border-b border-[var(--hairline)]">
           <div className="lg:col-span-4">
             <span className="lbl text-[var(--cobalt)]">EXPERIENCE TIMELINE</span>
-            <p className="font-serif-editorial text-[16px] leading-[1.55] text-[var(--muted)] mt-3 max-w-[30ch]">
+            <p className="text-[15px] font-normal leading-[1.55] tracking-[-0.005em] text-[var(--muted)] mt-3 max-w-[30ch]">
               Key roles, industry programs, and flagship builds from 2023 to 2026.
             </p>
           </div>
@@ -58,7 +58,7 @@ export function AboutSection() {
                     {exp.role}
                   </h3>
                   <p className="lbl text-[var(--muted)] mt-1.5">{exp.org}</p>
-                  <p className="font-serif-editorial text-[16.5px] leading-[1.55] text-[var(--ink)]/82 mt-3 max-w-[56ch]">
+                  <p className="text-[15.5px] font-normal leading-[1.55] tracking-[-0.005em] text-[var(--ink)]/82 mt-3 max-w-[56ch]">
                     {exp.summary}
                   </p>
                 </div>
@@ -71,7 +71,7 @@ export function AboutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pt-20">
           <div className="lg:col-span-4">
             <span className="lbl text-[var(--cobalt)]">CAPABILITIES &amp; STACK</span>
-            <p className="font-serif-editorial text-[16px] leading-[1.55] text-[var(--muted)] mt-3 max-w-[30ch]">
+            <p className="text-[15px] font-normal leading-[1.55] tracking-[-0.005em] text-[var(--muted)] mt-3 max-w-[30ch]">
               Focused tooling chosen for clarity, speed, and maintainability.
             </p>
           </div>
@@ -84,7 +84,7 @@ export function AboutSection() {
                   {group.items.map((item) => (
                     <li
                       key={item}
-                      className="text-[15px] text-[var(--ink)]/82 leading-[1.45]"
+                      className="text-[15px] font-normal tracking-[-0.005em] text-[var(--ink)]/82 leading-[1.45]"
                     >
                       {item}
                     </li>

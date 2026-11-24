@@ -37,7 +37,7 @@ export function HeroSection() {
         </span>
       </div>
 
-      {/* Center: Live-Typing Hero Stage (antigravity.google inspired minimalism) */}
+      {/* Center: Live-Typing Hero Stage */}
       <div className="my-auto py-12 md:py-16 max-w-[1160px]">
         <p className="lbl text-[var(--muted)] mb-5">01 — OVERVIEW</p>
 
@@ -56,7 +56,7 @@ export function HeroSection() {
           <div className="md:col-span-7">
             <span className="mask-line">
               <p
-                className="font-serif-editorial text-[18px] md:text-[20px] leading-[1.55] text-[var(--ink)]/82 max-w-[54ch] transition-transform duration-700"
+                className="text-[17px] md:text-[19px] font-normal leading-[1.55] tracking-[-0.01em] text-[var(--ink)]/82 max-w-[54ch] transition-transform duration-700"
                 style={{
                   transform: hasTypedOnce ? 'translateY(0%)' : 'translateY(108%)',
                   transitionTimingFunction: 'var(--ease)',

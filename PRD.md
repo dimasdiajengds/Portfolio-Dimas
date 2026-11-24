@@ -62,7 +62,7 @@ Membangun website portfolio pribadi untuk **Dimas Di Ajeng Duwi Saputra** yang m
     1. `"[PLACEHOLDER_PHRASE_1: misal 'clean digital systems with purpose.']"`
     2. `"[PLACEHOLDER_PHRASE_2: misal 'scalable cloud & web applications.']"`
     3. `"[PLACEHOLDER_PHRASE_3: misal 'thoughtful interfaces that last.']"`
-  - `[HERO_SUBHEADLINE]`: `"[PLACEHOLDER: 1–2 kalimat singkat bergaya Newsreader editorial, max 54 karakter per baris, menjelaskan fokus keahlian Anda.]"`
+  - `[HERO_SUBHEADLINE]`: `"[PLACEHOLDER: 1–2 kalimat singkat bergaya Inter Tight, max 54 karakter per baris, menjelaskan fokus keahlian Anda.]"`
   - `[HERO_PRIMARY_CTA]`: `"Explore Vinyl Projects ↓"` (smooth scroll ke `#projects`)
   - `[HERO_SECONDARY_CTA]`: `"[PLACEHOLDER: Contact Me / View Resume]"`
   - `[HERO_BOTTOM_LEFT_META]`: `"[PLACEHOLDER_LOCATION: Indonesia] — [PLACEHOLDER_STATUS: Open to Opportunities]"`
@@ -96,7 +96,7 @@ Membangun website portfolio pribadi untuk **Dimas Di Ajeng Duwi Saputra** yang m
     - Subtitle / Stack tag (`.lbl` cobalt)
     - Judul Project besar (`Inter Tight 600`)
     - Meta line: `YEAR / CATEGORY / ROLE`
-    - **Overview / Sinopsis** (`Newsreader 17px/1.6`)
+    - **Overview / Sinopsis** (`Inter Tight 400`, `17–18px/1.6`)
     - **Key Highlights / Challenge & Solution** (2–3 poin ringkas)
     - **Tech Stack** (daftar teks terstruktur dengan garis tipis, bukan pil warna-warni)
     - **Action Buttons:** `Live Demo ↗` (jika ada) & `Source Code / Repo ↗` (jika ada)

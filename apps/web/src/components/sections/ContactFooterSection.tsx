@@ -35,7 +35,7 @@ export function ContactFooterSection() {
             {contact.headline}
           </h2>
 
-          <p className="font-serif-editorial text-[19px] leading-[1.6] text-[var(--ink)]/80 mt-6 max-w-[52ch]">
+          <p className="text-[17px] md:text-[18px] font-normal leading-[1.6] tracking-[-0.01em] text-[var(--ink)]/80 mt-6 max-w-[52ch]">
             {contact.subtext}
           </p>
 

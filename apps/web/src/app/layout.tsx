@@ -1,19 +1,10 @@
 import type { Metadata } from 'next';
-import { Inter_Tight, Newsreader } from 'next/font/google';
+import { Inter_Tight } from 'next/font/google';
 import './globals.css';
 
 const interTight = Inter_Tight({
   subsets: ['latin'],
-  weight: ['500', '600', '800'],
   variable: '--font-inter-tight',
-  display: 'swap',
-});
-
-const newsreader = Newsreader({
-  subsets: ['latin'],
-  weight: ['400'],
-  style: ['normal', 'italic'],
-  variable: '--font-newsreader',
   display: 'swap',
 });
 
@@ -29,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${interTight.variable} ${newsreader.variable}`}>
+    <html lang="en" className={interTight.variable}>
       <body>{children}</body>
     </html>
   );

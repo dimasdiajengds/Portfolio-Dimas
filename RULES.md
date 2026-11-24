@@ -23,10 +23,9 @@ Seluruh section (Navbar, Hero, 3D Vinyl Showcase, Project Detail, About, Contact
 ```
 
 ### Typography Rules
-- **Display, Judul, Nav, UI Labels (`.lbl`):** `"Inter Tight", system-ui, sans-serif` (weights `500`, `600`, `800`).
+- **Single-Font System (Semua Teks & UI):** `"Inter Tight", system-ui, sans-serif` (variable weights `400`, `500`, `600`, `800`) untuk seluruh display headline, subheadline, body copy, sinopsis, label, navigasi, dan footer.
   - `.lbl`: `600`, `10.5px`, `line-height: 1`, `letter-spacing: 0.14em`, `text-transform: uppercase`.
-- **Body Editorial, Sinopsis, Kredit Italic:** `"Newsreader", Georgia, serif` (weight `400`, roman & italic).
-- **Dilarang menambahkan font keluarga ke-3** (tidak ada Poppins, Roboto, Montserrat, atau font monospace dekoratif yang tidak perlu).
+- **Dilarang menambahkan font keluarga lain** (tidak ada `Newsreader`, serif dekoratif, Poppins, Roboto, Montserrat, atau font monospace yang tidak perlu — seluruh proyek konsisten menggunakan `Inter Tight`).
 - **Tanpa teks Jepang / Kanji** di seluruh UI (sesuai keputusan final desain).
 
 ### Layout & Spacing Rules

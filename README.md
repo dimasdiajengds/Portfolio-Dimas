@@ -7,7 +7,7 @@ Personal portfolio website built with a minimalist editorial aesthetic, live-typ
 - **Live-Typing Hero (`#hero`)** — Zero-dependency typewriter opening with mask-slide reveals and `prefers-reduced-motion` support.
 - **Curved Slim 3D Vinyl LP Showcase (`#projects`)** — Interactive 3D vinyl shelf featuring 7 flagship projects (2023–2026) with dual-sided artwork, directional flip animation, drag/keyboard/timeline navigation, and natural vertical scroll pass-through.
 - **Linked Case Study Viewer (`#project-detail`)** — Selecting any vinyl opens its full project breakdown with smooth scrolling and SVG ink-bleed artwork reveal.
-- **Editorial Design System** — Warm paper palette (`#ECE8E0`), cobalt accents (`#1F3FB0`), self-hosted typography (`Inter Tight` & `Newsreader`), and subtle paper grain texture.
+- **Design System** — Warm paper palette (`#ECE8E0`), cobalt accents (`#1F3FB0`), unified self-hosted `Inter Tight` typography, and subtle paper grain texture.
 
 ## Featured Projects
 
