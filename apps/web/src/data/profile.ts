@@ -26,10 +26,11 @@ export const PROFILE = {
     { label: 'About', href: '#about', id: 'about' },
     { label: 'Contact', href: '#contact', id: 'contact' },
   ],
-  navCta: {
-    label: "Let's Talk",
-    href: '#contact',
-  },
+  headerSocials: [
+    { id: 'linkedin', name: 'LinkedIn', href: 'https://linkedin.com/' },
+    { id: 'instagram', name: 'Instagram', href: 'https://instagram.com/' },
+    { id: 'tiktok', name: 'TikTok', href: 'https://tiktok.com/' },
+  ],
   about: {
     sectionLabel: '04 / ABOUT & EXPERIENCE',
     headline:

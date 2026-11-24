@@ -1,0 +1,423 @@
+/* Classic 1970s Walnut & Brushed-Aluminum Audiophile Turntable (100% GPU spin & S-tonearm) */
+
+@keyframes vinylSpin {
+  from {
+    transform: rotate(var(--vinyl-start-angle, 0deg));
+  }
+  to {
+    transform: rotate(calc(var(--vinyl-start-angle, 0deg) + 360deg));
+  }
+}
+
+@keyframes platterLandSettle {
+  0% {
+    transform: scale(1.022);
+  }
+  55% {
+    transform: scale(0.994);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Warm Walnut Hardwood Plinth Frame */
+.deck {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  aspect-ratio: 16 / 12.6;
+  container-type: inline-size;
+  border-radius: 6px;
+  padding: 3.4%;
+  background:
+    repeating-linear-gradient(
+      2deg,
+      rgba(255, 224, 185, 0.035) 0px,
+      rgba(255, 224, 185, 0.035) 2px,
+      rgba(18, 8, 2, 0.08) 2px,
+      rgba(18, 8, 2, 0.08) 5px,
+      transparent 5px,
+      transparent 11px
+    ),
+    linear-gradient(150deg, #6e4429 0%, #53301b 45%, #3f2212 100%);
+  border: 1px solid #2c170b;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 225, 190, 0.28),
+    inset 0 -2px 6px rgba(15, 6, 2, 0.45),
+    0 22px 42px -22px rgba(24, 12, 4, 0.45);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  contain: layout style paint;
+}
+
+/* Recessed Brushed Champagne-Silver Top Plate (Marantz / Thorens inspired) */
+.topPlate {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.08) 0px,
+      rgba(255, 255, 255, 0.08) 1px,
+      rgba(35, 28, 20, 0.035) 1px,
+      rgba(35, 28, 20, 0.035) 3px
+    ),
+    linear-gradient(160deg, #e5e0d5 0%, #d2cabd 52%, #bfb6a6 100%);
+  border: 1px solid rgba(40, 26, 14, 0.35);
+  box-shadow:
+    inset 0 2px 6px rgba(34, 20, 10, 0.22),
+    inset 0 1px 0 rgba(255, 252, 245, 0.65);
+}
+
+/* Brushed brass/steel corner plate screws */
+.cornerDot {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 35%, #f5efe0 0%, #a59882 65%, #5c5142 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.65),
+    0 1px 1px rgba(25, 16, 8, 0.35);
+  pointer-events: none;
+}
+
+.cornerDot::after {
+  content: '';
+  position: absolute;
+  left: 1.5px;
+  right: 1.5px;
+  top: 50%;
+  height: 1px;
+  background: rgba(35, 24, 14, 0.55);
+  transform: translateY(-50%) rotate(-32deg);
+}
+
+/* Die-Cast Stepped Aluminum Platter Well */
+.platterWell {
+  position: absolute;
+  left: 5.5%;
+  top: 50%;
+  width: 68%;
+  aspect-ratio: 1 / 1;
+  transform: translateY(-50%);
+  border-radius: 9999px;
+  background: radial-gradient(circle at 50% 50%, #1d1b19 0%, #11100f 85%, #070706 100%);
+  box-shadow:
+    inset 0 2px 10px rgba(0, 0, 0, 0.65),
+    0 0 0 2px #585249,
+    0 0 0 6px #d6d0c4,
+    0 0 0 8px #8c8476,
+    0 10px 20px rgba(26, 15, 6, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.8%;
+}
+
+/* Classic Machined Stroboscopic Timing Dots Ring */
+.strobeRing {
+  position: absolute;
+  inset: 1.2%;
+  border-radius: 9999px;
+  border: 2px dotted rgba(242, 232, 210, 0.38);
+  pointer-events: none;
+}
+
+/* Warm Vintage Amber Strobe Pilot Lamp (glows beside platter when spinning) */
+.strobeLamp {
+  position: absolute;
+  left: 4.4%;
+  bottom: 16%;
+  width: 11px;
+  height: 11px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 38% 35%, #7c6750 0%, #3d3023 80%);
+  border: 1.5px solid #6b6154;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.strobeLampOn {
+  background: radial-gradient(circle at 40% 35%, #fff3c4 0%, #f59e0b 52%, #b45309 100%);
+  box-shadow:
+    0 0 10px 2px rgba(245, 158, 11, 0.65),
+    0 0 22px 4px rgba(245, 158, 11, 0.3);
+}
+
+/* Landing target container measured by VinylFlightOverlay */
+.platterTarget {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+.platterLanded {
+  animation: platterLandSettle 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Rotating vinyl disc wrapper — pure GPU compositor animation */
+.discSpinner {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  will-change: transform;
+  animation: vinylSpin 5.4s linear infinite;
+  animation-play-state: paused;
+}
+
+.discSpinning {
+  animation-play-state: running;
+}
+
+.discHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Non-rotating warm room light reflection across the spinning black vinyl */
+.specularSheen {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: conic-gradient(
+    from -38deg,
+    rgba(255, 244, 222, 0) 0deg,
+    rgba(255, 244, 222, 0.13) 26deg,
+    rgba(255, 244, 222, 0) 56deg,
+    rgba(255, 244, 222, 0) 178deg,
+    rgba(255, 244, 222, 0.095) 208deg,
+    rgba(255, 244, 222, 0) 240deg,
+    rgba(255, 244, 222, 0) 360deg
+  );
+  mask-image: radial-gradient(circle, transparent 0 37%, black 38% 98%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle, transparent 0 37%, black 38% 98%, transparent 100%);
+}
+
+/* Turned Brass / Chrome Center Spindle Pin */
+.spindlePin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 35%, #fffbf0 0%, #d8c394 52%, #6d5834 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Classic Brushed-Chrome Gimbal Base (Top-Right) */
+.tonearmMount {
+  position: absolute;
+  right: 6.2%;
+  top: 9.5%;
+  width: 18%;
+  aspect-ratio: 1 / 1;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 32%, #f7f4ec 0%, #c8c1b3 58%, #8f8678 100%);
+  border: 1.5px solid #6b6255;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.7),
+    0 8px 16px -6px rgba(28, 16, 6, 0.42);
+  z-index: 8;
+  cursor: pointer;
+}
+
+.tonearmBaseRing {
+  position: absolute;
+  inset: 17%;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 40% 35%, #3a3632 0%, #191715 80%);
+  border: 1.5px solid #b8ab96;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Pivoting Classic S-Shaped Chrome Tonearm */
+.tonearmPivot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform: rotate(0deg);
+  transition: transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  pointer-events: none;
+}
+
+.tonearmEngaged {
+  transform: rotate(22deg);
+}
+
+/* SVG Classic S-Curved Chrome Wand + Knurled Counterweight + Slotted Headshell */
+.armSvg {
+  position: absolute;
+  left: -7.6cqw;
+  top: -8.5cqw;
+  width: 15.2cqw;
+  height: 49cqw;
+  overflow: visible;
+  filter: drop-shadow(3px 6px 5px rgba(24, 14, 6, 0.28));
+}
+
+/* Classic Arm Rest Saddle Clip */
+.armRest {
+  position: absolute;
+  right: 13.8%;
+  top: 47%;
+  width: 13px;
+  height: 13px;
+  border-radius: 9999px;
+  border: 2px solid #595044;
+  background: linear-gradient(145deg, #ece7dc, #aba293);
+  box-shadow: 0 2px 4px rgba(28, 16, 6, 0.25);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Classic Knurled Rotary Pitch Control Knob (Lower-Right) */
+.rotaryDial {
+  position: absolute;
+  right: 7.5%;
+  bottom: 24%;
+  width: 8.6%;
+  aspect-ratio: 1 / 1;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 36% 32%, #f8f4ea 0%, #c6beb0 55%, #7e7669 100%);
+  border: 1.5px solid #5c5347;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.75),
+    0 4px 8px rgba(25, 14, 6, 0.3);
+  pointer-events: none;
+}
+
+.rotaryDial::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 16%;
+  width: 2px;
+  height: 28%;
+  background: #2c241d;
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+
+.dialLabel {
+  position: absolute;
+  right: 5.5%;
+  bottom: 16.5%;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #4f4437;
+  pointer-events: none;
+}
+
+/* Classic Brushed-Aluminum Start/Stop Rocker Button (Lower-Left) */
+.powerBtn {
+  position: absolute;
+  left: 4.2%;
+  bottom: 4.5%;
+  height: 27px;
+  padding: 0 11px;
+  border-radius: 2px;
+  border: 1px solid #6b6154;
+  background: linear-gradient(180deg, #f3efe6 0%, #d4ccbe 100%);
+  color: #241911;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 2px 4px rgba(24, 14, 6, 0.22);
+  cursor: pointer;
+  z-index: 9;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.powerBtn:hover {
+  background: linear-gradient(180deg, #3b2719 0%, #24160d 100%);
+  color: #f6ebd4;
+  border-color: #24160d;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(65, 48, 34, 0.3);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.statusDotActive {
+  background: #d97706;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.85);
+}
+
+/* Engraved Vintage Brass / Ink Nameplate (Top-Left) */
+.modelTag {
+  position: absolute;
+  left: 4.2%;
+  top: 4.5%;
+  padding: 3px 7px;
+  background: linear-gradient(180deg, #2d231c 0%, #1a1410 100%);
+  border: 1px solid #967b52;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #ead7b1;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .powerBtn {
+    height: 23px;
+    padding: 0 8px;
+    font-size: 8px;
+  }
+
+  .modelTag {
+    font-size: 7.5px;
+    padding: 2px 5px;
+  }
+
+  .dialLabel {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .discSpinner {
+    animation: none !important;
+  }
+
+  .tonearmPivot {
+    transition: none;
+  }
+
+  .platterLanded {
+    animation: none;
+  }
+}

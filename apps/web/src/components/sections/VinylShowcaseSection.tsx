@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   INITIAL_PROJECT_INDEX,
   PROJECTS,
@@ -9,21 +9,20 @@ import {
 import { useInViewport } from '@/hooks/useInViewport';
 import {
   type ArcMetrics,
-  COPIES,
   PROJECT_COUNT,
   TOTAL_SLOTS,
   buildArcMetrics,
   computeVinylFrame,
   relIndex,
-  smoothstep,
 } from '@/components/vinyl/arcMath';
+import type { VinylSourceRect } from '@/components/vinyl/VinylFlightOverlay';
 import styles from '@/components/vinyl/VinylShelf.module.css';
 
 interface VinylShowcaseSectionProps {
   activeIndex: number;
   externalJumpNonce: number;
   onActiveIndexChange: (index: number) => void;
-  onOpenProject: (index: number) => void;
+  onOpenProject: (index: number, sourceRect?: VinylSourceRect) => void;
 }
 
 const VIRTUAL_ITEMS = Array.from({ length: TOTAL_SLOTS }, (_, v) => ({
@@ -103,10 +102,8 @@ export function VinylShowcaseSection({
   const sectionRef = useRef<HTMLElement | null>(null);
   const probeRef = useRef<HTMLDivElement | null>(null);
   const shelfRef = useRef<HTMLDivElement | null>(null);
-  const playRingRef = useRef<HTMLButtonElement | null>(null);
   const timelineDotRef = useRef<HTMLDivElement | null>(null);
   const timelineTrackRef = useRef<HTMLDivElement | null>(null);
-  const cursorRef = useRef<HTMLDivElement | null>(null);
 
   const titleMaskRef = useRef<HTMLDivElement | null>(null);
   const subMaskRef = useRef<HTMLDivElement | null>(null);
@@ -123,18 +120,24 @@ export function VinylShowcaseSection({
   // Core animation mutable state (zero React re-renders per frame!)
   const startSlot = INITIAL_PROJECT_INDEX + PROJECT_COUNT * 2;
   const sRef = useRef<number>(startSlot);
+  const velRef = useRef<number>(0);
   const TRef = useRef<number>(startSlot);
   const navDirRef = useRef<1 | -1>(1);
   const activeIdxRef = useRef<number>(INITIAL_PROJECT_INDEX);
   const metricsRef = useRef<ArcMetrics | null>(null);
+  const layoutCacheRef = useRef({ sectionW: 1280, sectionH: 800, timelineW: 800 });
 
   const liftsRef = useRef<Float32Array>(new Float32Array(TOTAL_SLOTS));
   const hoveredVirtualRef = useRef<number>(-1);
   const timelineYearRef = useRef<number>(PROJECTS[INITIAL_PROJECT_INDEX].timelineYear);
 
-  // Pointer, tilt, drag, & custom cursor refs
-  const pointerRef = useRef({ x: -200, y: -200, inside: false, mode: 'hidden' as string });
-  const cursorPosRef = useRef({ x: -200, y: -200 });
+  // Per-slot DOM write caches (2 = uninitialized, 0 = hidden, 1 = visible)
+  const prevVisibleRef = useRef<Uint8Array>(new Uint8Array(TOTAL_SLOTS).fill(2));
+  const prevZIndexRef = useRef<Int32Array>(new Int32Array(TOTAL_SLOTS).fill(-1));
+  const prevOpacityRef = useRef<Float32Array>(new Float32Array(TOTAL_SLOTS).fill(-1));
+
+  // Pointer (stored in section-local coordinates to avoid layout reads in rAF), tilt, & drag refs
+  const pointerRef = useRef({ x: -200, y: -200, inside: false });
   const tiltRef = useRef({ x: 0, y: 0 });
   const dragRef = useRef({
     active: false,
@@ -145,6 +148,7 @@ export function VinylShowcaseSection({
     suppressClickUntil: 0,
   });
   const wheelSnapTimerRef = useRef<number | null>(null);
+  const wakeRef = useRef<() => void>(() => {});
 
   const onActiveChangeRef = useRef(onActiveIndexChange);
   onActiveChangeRef.current = onActiveIndexChange;
@@ -222,6 +226,7 @@ export function VinylShowcaseSection({
     if (delta !== 0) {
       navDirRef.current = delta > 0 ? 1 : -1;
       TRef.current = Math.round(TRef.current) + delta;
+      wakeRef.current();
     }
   }, [activeIndex, externalJumpNonce]);
 
@@ -234,6 +239,14 @@ export function VinylShowcaseSection({
     const isMobile = window.innerWidth <= 767;
     const m = buildArcMetrics(H, isMobile);
     metricsRef.current = m;
+
+    const rect = section.getBoundingClientRect();
+    const timelineW = timelineTrackRef.current?.getBoundingClientRect().width || rect.width;
+    layoutCacheRef.current = {
+      sectionW: rect.width || window.innerWidth,
+      sectionH: rect.height || window.innerHeight,
+      timelineW,
+    };
 
     const halfW = m.dFull * 0.5;
     const halfH = m.H * 0.5;
@@ -267,20 +280,12 @@ export function VinylShowcaseSection({
       }
     }
 
-    // Position play ring on lower-left corner of the active center jacket
-    const playRing = playRingRef.current;
-    if (playRing) {
-      const rect = section.getBoundingClientRect();
-      const cyPx = rect.height * 0.43;
-      const jacketLeftOffset = halfW;
-      playRing.style.left = `${rect.width * 0.5 - jacketLeftOffset + 6}px`;
-      playRing.style.top = `${cyPx + m.H * 0.36}px`;
-    }
+    wakeRef.current();
   }, []);
 
   useEffect(() => {
     applyMetricsToDOM();
-    window.addEventListener('resize', applyMetricsToDOM);
+    window.addEventListener('resize', applyMetricsToDOM, { passive: true });
     return () => window.removeEventListener('resize', applyMetricsToDOM);
   }, [applyMetricsToDOM]);
 
@@ -288,6 +293,7 @@ export function VinylShowcaseSection({
     if (delta === 0) return;
     navDirRef.current = delta > 0 ? 1 : -1;
     TRef.current = Math.round(TRef.current) + delta;
+    wakeRef.current();
   }, []);
 
   // Keyboard navigation when Vinyl Showcase is in viewport
@@ -333,12 +339,14 @@ export function VinylShowcaseSection({
       const stepDelta = (e.deltaX / (m.slot + m.gap)) * 0.45;
       navDirRef.current = stepDelta >= 0 ? 1 : -1;
       TRef.current += stepDelta;
+      wakeRef.current();
 
       if (wheelSnapTimerRef.current) {
         window.clearTimeout(wheelSnapTimerRef.current);
       }
       wheelSnapTimerRef.current = window.setTimeout(() => {
         TRef.current = Math.round(TRef.current);
+        wakeRef.current();
       }, 160);
     };
 
@@ -349,12 +357,11 @@ export function VinylShowcaseSection({
     };
   }, []);
 
-  // Main Viewport-Gated requestAnimationFrame Loop (0% idle CPU when scrolled away!)
+  // Main On-Demand + Viewport-Gated requestAnimationFrame Loop
+  // Zero layout reads inside rAF, GPU-composited transforms/opacity only, auto-sleeps when settled!
   useEffect(() => {
     if (!inView) {
-      if (cursorRef.current) {
-        cursorRef.current.setAttribute('data-mode', 'hidden');
-      }
+      wakeRef.current = () => {};
       return;
     }
 
@@ -364,17 +371,15 @@ export function VinylShowcaseSection({
 
     let rafId = 0;
     let lastTime = performance.now();
+    let prevDotPx = -1;
 
-    const loop = (now: number) => {
+    const render = (now: number) => {
+      rafId = 0;
       const dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
       lastTime = now;
 
       const m = metricsRef.current;
-      const section = sectionRef.current;
-      if (!m || !section) {
-        rafId = window.requestAnimationFrame(loop);
-        return;
-      }
+      if (!m) return;
 
       // 1. Update travel direction before spring update
       const diff = TRef.current - sRef.current;
@@ -382,12 +387,19 @@ export function VinylShowcaseSection({
         navDirRef.current = diff > 0 ? 1 : -1;
       }
 
-      // 2. Spring motion
+      // 2. Analytical critically-damped 2nd-order spring (smooth ease-in, velvety landing, zero overshoot)
       if (reducedMotion) {
         sRef.current = TRef.current;
+        velRef.current = 0;
       } else {
-        const k = dragRef.current.active ? 18 : 5.2;
-        sRef.current += diff * (1 - Math.exp(-k * dt));
+        const omega = dragRef.current.active ? 22 : 9.2;
+        const x0 = sRef.current - TRef.current;
+        const v0 = velRef.current;
+        const expTerm = Math.exp(-omega * dt);
+        const newX = (x0 + (v0 + omega * x0) * dt) * expTerm;
+        const newV = (v0 - omega * (v0 + omega * x0) * dt) * expTerm;
+        sRef.current = TRef.current + newX;
+        velRef.current = newV;
       }
 
       // Keep s & T near middle loop (COPIES=5 -> center copy is index 2, slot 14..20)
@@ -429,11 +441,10 @@ export function VinylShowcaseSection({
         onActiveChangeRef.current(newActive);
       }
 
-      // 4. Cover 3D tilt & cursor mode evaluation
-      const rect = section.getBoundingClientRect();
-      const W = rect.width;
-      const cyScreen = rect.top + rect.height * 0.43;
-      const cxScreen = rect.left + W * 0.5;
+      // 4. Cover 3D tilt & cursor evaluation using cached layout (zero DOM reads in rAF!)
+      const { sectionW: W, sectionH: Hsec, timelineW } = layoutCacheRef.current;
+      const cxLocal = W * 0.5;
+      const cyLocal = Hsec * 0.43;
       const ptr = pointerRef.current;
       const settled = Math.abs(T - s) < 0.3;
 
@@ -441,27 +452,31 @@ export function VinylShowcaseSection({
         ptr.inside &&
         settled &&
         !dragRef.current.active &&
-        Math.abs(ptr.x - cxScreen) < m.dFull * 0.52 &&
-        Math.abs(ptr.y - cyScreen) < m.H * 0.54;
+        Math.abs(ptr.x - cxLocal) < m.dFull * 0.52 &&
+        Math.abs(ptr.y - cyLocal) < m.H * 0.54;
 
       let targetTiltY = 0;
       let targetTiltX = 0;
       if (ptr.inside && !reducedMotion) {
         if (onCover) {
-          targetTiltY = ((ptr.x - cxScreen) / (m.dFull * 0.55)) * 8;
-          targetTiltX = -((ptr.y - cyScreen) / (m.H * 0.5)) * 5;
+          targetTiltY = ((ptr.x - cxLocal) / (m.dFull * 0.55)) * 8;
+          targetTiltX = -((ptr.y - cyLocal) / (m.H * 0.5)) * 5;
         } else {
-          targetTiltY = ((ptr.x - cxScreen) / Math.max(1, W)) * 4;
+          targetTiltY = ((ptr.x - cxLocal) / Math.max(1, W)) * 4;
           targetTiltX = 0;
         }
       }
-      const tiltEase = reducedMotion ? 1 : 1 - Math.exp(-7 * dt);
+      const tiltEase = reducedMotion ? 1 : 1 - Math.exp(-8 * dt);
       tiltRef.current.y += (targetTiltY - tiltRef.current.y) * tiltEase;
       tiltRef.current.x += (targetTiltX - tiltRef.current.x) * tiltEase;
 
-      // 5. Update every virtual slim 3D vinyl record
+      // 5. Update every virtual slim 3D vinyl record (GPU transform + cached opacity/zIndex only)
       const lifts = liftsRef.current;
+      const prevVisible = prevVisibleRef.current;
+      const prevZ = prevZIndexRef.current;
+      const prevOp = prevOpacityRef.current;
       const liftEase = reducedMotion ? 1 : 1 - Math.exp(-12 * dt);
+      let anyLiftMoving = false;
 
       for (let v = 0; v < TOTAL_SLOTS; v++) {
         const el = itemRefs.current[v];
@@ -469,7 +484,13 @@ export function VinylShowcaseSection({
 
         const r = relIndex(v, s);
         const wantLift = hoveredVirtualRef.current === v && Math.abs(r) > 0.5 ? 1 : 0;
-        lifts[v] += (wantLift - lifts[v]) * liftEase;
+        const liftDelta = wantLift - lifts[v];
+        if (Math.abs(liftDelta) > 0.002) {
+          lifts[v] += liftDelta * liftEase;
+          anyLiftMoving = true;
+        } else {
+          lifts[v] = wantLift;
+        }
 
         const frame = computeVinylFrame(
           r,
@@ -482,32 +503,38 @@ export function VinylShowcaseSection({
         );
 
         if (!frame.visible) {
-          if (el.style.visibility !== 'hidden') {
+          if (prevVisible[v] !== 0) {
+            prevVisible[v] = 0;
             el.style.visibility = 'hidden';
+            el.style.willChange = 'auto';
           }
           continue;
         }
 
-        if (el.style.visibility !== 'visible') {
+        if (prevVisible[v] !== 1) {
+          prevVisible[v] = 1;
           el.style.visibility = 'visible';
+          el.style.willChange = 'transform';
         }
 
         el.style.transform = `translate3d(${frame.x.toFixed(2)}px, ${frame.y.toFixed(2)}px, ${frame.z.toFixed(2)}px) rotateX(${frame.rotX.toFixed(2)}deg) rotateY(${frame.rotY.toFixed(2)}deg)`;
-        el.style.zIndex = String(frame.zIndex);
-        el.style.setProperty('--shade', frame.shade.toFixed(3));
-        el.dataset.near = frame.nearCenter ? '1' : '0';
+
+        if (prevZ[v] !== frame.zIndex) {
+          prevZ[v] = frame.zIndex;
+          el.style.zIndex = String(frame.zIndex);
+        }
+
+        // Compositor-only atmospheric depth shading (zero expensive CSS filter passes)
+        const nextOpacity = Math.round((1 - frame.shade * 0.42) * 200) / 200;
+        if (prevOp[v] !== nextOpacity) {
+          prevOp[v] = nextOpacity;
+          el.style.opacity = String(nextOpacity);
+        }
       }
 
-      // 6. Play ring smoothstep scale
-      const playRing = playRingRef.current;
-      if (playRing) {
-        const pScale = smoothstep(Math.max(0, 1 - Math.abs(T - s) * 3));
-        playRing.style.transform = `scale(${pScale.toFixed(3)})`;
-        playRing.style.pointerEvents = pScale > 0.5 ? 'auto' : 'none';
-      }
-
-      // 7. Timeline cobalt dot interpolation (2023.0 .. 2026.0)
+      // 6. Timeline cobalt dot interpolation via GPU translate3d (zero layout property writes!)
       const dot = timelineDotRef.current;
+      let targetYear = timelineYearRef.current;
       if (dot) {
         const f0 = Math.floor(s);
         const frac = s - f0;
@@ -515,9 +542,7 @@ export function VinylShowcaseSection({
         const i1 = (i0 + 1) % PROJECT_COUNT;
         const y0 = PROJECTS[i0].timelineYear;
         const y1 = PROJECTS[i1].timelineYear;
-        let targetYear: number;
         if (i0 === PROJECT_COUNT - 1 && i1 === 0) {
-          // 2026.0 -> 2023.0 wrap jumps cleanly at halfway point
           targetYear = frac < 0.5 ? y0 : y1;
         } else {
           targetYear = y0 + (y1 - y0) * frac;
@@ -530,39 +555,58 @@ export function VinylShowcaseSection({
             (targetYear - timelineYearRef.current) * (1 - Math.exp(-14 * dt));
         }
 
-        const pct = ((timelineYearRef.current - 2023) / 3) * 100;
-        dot.style.left = `${Math.max(0, Math.min(100, pct)).toFixed(3)}%`;
-      }
-
-      // 8. Custom cursor smooth follow (1 - e^(-16dt))
-      const cursorEl = cursorRef.current;
-      if (cursorEl) {
-        if (!ptr.inside) {
-          cursorEl.setAttribute('data-mode', 'hidden');
-        } else {
-          const cEase = reducedMotion ? 1 : 1 - Math.exp(-16 * dt);
-          cursorPosRef.current.x += (ptr.x - cursorPosRef.current.x) * cEase;
-          cursorPosRef.current.y += (ptr.y - cursorPosRef.current.y) * cEase;
-          cursorEl.style.transform = `translate3d(${cursorPosRef.current.x.toFixed(1)}px, ${cursorPosRef.current.y.toFixed(1)}px, 0)`;
-
-          const resolvedMode =
-            ptr.mode === 'btn'
-              ? 'btn'
-              : onCover
-                ? 'open'
-                : hoveredVirtualRef.current !== -1
-                  ? 'spine'
-                  : 'default';
-          cursorEl.setAttribute('data-mode', resolvedMode);
+        const ratio = Math.max(0, Math.min(1, (timelineYearRef.current - 2023) / 3));
+        const dotPx = Math.round(ratio * timelineW * 10) / 10;
+        if (dotPx !== prevDotPx) {
+          prevDotPx = dotPx;
+          dot.style.transform = `translate3d(${dotPx}px, 0, 0)`;
         }
       }
 
-      rafId = window.requestAnimationFrame(loop);
+      // 8. Continue rAF only while motion, tilt, hover lift, or timeline is active; sleep at 0% CPU when settled!
+      const isMoving =
+        dragRef.current.active ||
+        Math.abs(T - s) > 0.0005 ||
+        Math.abs(velRef.current) > 0.003 ||
+        Math.abs(targetTiltX - tiltRef.current.x) > 0.02 ||
+        Math.abs(targetTiltY - tiltRef.current.y) > 0.02 ||
+        anyLiftMoving ||
+        Math.abs(targetYear - timelineYearRef.current) > 0.001;
+
+      if (isMoving) {
+        rafId = window.requestAnimationFrame(render);
+      } else {
+        sRef.current = T;
+        velRef.current = 0;
+        tiltRef.current.x = targetTiltX;
+        tiltRef.current.y = targetTiltY;
+      }
     };
 
-    rafId = window.requestAnimationFrame(loop);
-    return () => window.cancelAnimationFrame(rafId);
+    const wake = () => {
+      if (rafId) return;
+      lastTime = performance.now();
+      rafId = window.requestAnimationFrame(render);
+    };
+
+    wakeRef.current = wake;
+    wake();
+
+    return () => {
+      wakeRef.current = () => {};
+      if (rafId) window.cancelAnimationFrame(rafId);
+    };
   }, [applyMetricsToDOM, inView, reducedMotion]);
+
+  const syncLocalPointer = useCallback((clientX: number, clientY: number) => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const rect = section.getBoundingClientRect();
+    pointerRef.current.x = clientX - rect.left;
+    pointerRef.current.y = clientY - rect.top;
+    pointerRef.current.inside = true;
+    wakeRef.current();
+  }, []);
 
   // Pointer Drag Handlers on the Shelf
   const handleShelfPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -575,12 +619,11 @@ export function VinylShowcaseSection({
       pointerId: e.pointerId,
       suppressClickUntil: dragRef.current.suppressClickUntil,
     };
+    wakeRef.current();
   };
 
   const handleShelfPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    pointerRef.current.x = e.clientX;
-    pointerRef.current.y = e.clientY;
-    pointerRef.current.inside = true;
+    syncLocalPointer(e.clientX, e.clientY);
 
     const drag = dragRef.current;
     if (!drag.active || drag.pointerId !== e.pointerId) return;
@@ -596,6 +639,7 @@ export function VinylShowcaseSection({
         navDirRef.current = nextT > TRef.current ? 1 : -1;
       }
       TRef.current = nextT;
+      wakeRef.current();
     }
   };
 
@@ -612,19 +656,31 @@ export function VinylShowcaseSection({
         // Ignore if pointer capture wasn't acquired
       }
     }
+    wakeRef.current();
   };
 
   const handleItemClick = (v: number, projectIndex: number) => {
     if (performance.now() < dragRef.current.suppressClickUntil) return;
     const r = relIndex(v, sRef.current);
     if (Math.abs(r) < 0.45) {
-      // Active center vinyl clicked -> open Project Detail directly in Section 03!
+      // Active center vinyl clicked -> eject LP disc & drop into Section 03 turntable!
       TRef.current = Math.round(TRef.current);
-      onOpenProject(projectIndex);
+      wakeRef.current();
+      const rect = frontRefs.current[v]?.getBoundingClientRect();
+      const sourceRect: VinylSourceRect | undefined = rect
+        ? {
+            left: rect.left,
+            top: rect.top,
+            width: rect.width,
+            height: rect.height,
+          }
+        : undefined;
+      onOpenProject(projectIndex, sourceRect);
     } else {
       // Side vinyl clicked -> glide smoothly to center (triggering 1-step directional back spin!)
       navDirRef.current = r > 0 ? 1 : -1;
       TRef.current = Math.round(sRef.current + r);
+      wakeRef.current();
     }
   };
 
@@ -655,45 +711,26 @@ export function VinylShowcaseSection({
     }
   };
 
-  const activeProject = useMemo(
-    () => PROJECTS[activeIndex] ?? PROJECTS[INITIAL_PROJECT_INDEX],
-    [activeIndex],
-  );
-
   return (
     <section
       id="projects"
       ref={sectionRef}
       aria-label="Curved 3D Vinyl LP Project Showcase"
-      className={`${styles.section} vinyl-cursor-zone`}
+      className={styles.section}
       onPointerMove={(e) => {
-        pointerRef.current.x = e.clientX;
-        pointerRef.current.y = e.clientY;
-        pointerRef.current.inside = true;
+        syncLocalPointer(e.clientX, e.clientY);
       }}
       onPointerEnter={(e) => {
-        pointerRef.current.x = e.clientX;
-        pointerRef.current.y = e.clientY;
-        cursorPosRef.current.x = e.clientX;
-        cursorPosRef.current.y = e.clientY;
-        pointerRef.current.inside = true;
+        syncLocalPointer(e.clientX, e.clientY);
       }}
       onPointerLeave={() => {
         pointerRef.current.inside = false;
-        pointerRef.current.mode = 'hidden';
         hoveredVirtualRef.current = -1;
+        wakeRef.current();
       }}
     >
       {/* Hidden Height Probe */}
       <div ref={probeRef} className={styles.probe} aria-hidden="true" />
-
-      {/* Section Top Metadata */}
-      <div className={styles.sectionMeta}>
-        <span className="lbl text-[var(--ink)]">02 / SELECTED VINYL PROJECTS</span>
-        <span className={`lbl ${styles.sectionMetaHint}`}>
-          DRAG OR USE ← / → TO SPIN · CLICK CENTER VINYL TO OPEN DETAILS
-        </span>
-      </div>
 
       {/* Giant Halftone Vertical Background Typography */}
       <div aria-hidden="true" className={`${styles.halftone} ${styles.halftoneLeft}`}>
@@ -730,10 +767,12 @@ export function VinylShowcaseSection({
                 className={styles.item}
                 onPointerEnter={() => {
                   hoveredVirtualRef.current = v;
+                  wakeRef.current();
                 }}
                 onPointerLeave={() => {
                   if (hoveredVirtualRef.current === v) {
                     hoveredVirtualRef.current = -1;
+                    wakeRef.current();
                   }
                 }}
                 onClick={() => handleItemClick(v, projectIndex)}
@@ -780,37 +819,12 @@ export function VinylShowcaseSection({
         </div>
       </div>
 
-      {/* Cobalt Play / Open Ring on lower-left corner of center vinyl */}
-      <button
-        ref={playRingRef}
-        type="button"
-        aria-label={`Open ${activeProject.title} project details`}
-        className={styles.playRing}
-        onClick={() => onOpenProject(activeIdxRef.current)}
-        onPointerEnter={() => {
-          pointerRef.current.mode = 'btn';
-        }}
-        onPointerLeave={() => {
-          pointerRef.current.mode = 'default';
-        }}
-      >
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
-          <path d="M3 1.8L10.5 6L3 10.2V1.8Z" />
-        </svg>
-      </button>
-
       {/* Previous / Next Cobalt Arrows */}
       <button
         type="button"
         aria-label="Previous project"
         className={`${styles.arrowBtn} ${styles.arrowPrev}`}
         onClick={() => stepBy(-1)}
-        onPointerEnter={() => {
-          pointerRef.current.mode = 'btn';
-        }}
-        onPointerLeave={() => {
-          pointerRef.current.mode = 'default';
-        }}
       >
         <svg width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" strokeWidth="1.2">
           <path d="M6 1L1 6l5 5M1 6h23" />
@@ -822,12 +836,6 @@ export function VinylShowcaseSection({
         aria-label="Next project"
         className={`${styles.arrowBtn} ${styles.arrowNext}`}
         onClick={() => stepBy(1)}
-        onPointerEnter={() => {
-          pointerRef.current.mode = 'btn';
-        }}
-        onPointerLeave={() => {
-          pointerRef.current.mode = 'default';
-        }}
       >
         <svg width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" strokeWidth="1.2">
           <path d="M18 1l5 5-5 5M23 6H0" />
@@ -882,40 +890,7 @@ export function VinylShowcaseSection({
           aria-label="Jump along 2023 to 2026 project timeline"
           className={styles.timelineHit}
           onClick={handleTimelineClick}
-          onPointerEnter={() => {
-            pointerRef.current.mode = 'btn';
-          }}
-          onPointerLeave={() => {
-            pointerRef.current.mode = 'default';
-          }}
         />
-      </div>
-
-      {/* Subtle Scroll Continuation Cue to Section 03 */}
-      <div className={styles.shelfFooterBar}>
-        <span className="lbl text-[var(--muted)]">
-          {activeProject.code} / 0{PROJECT_COUNT}
-        </span>
-        <button
-          type="button"
-          onClick={() => onOpenProject(activeIdxRef.current)}
-          onPointerEnter={() => {
-            pointerRef.current.mode = 'btn';
-          }}
-          onPointerLeave={() => {
-            pointerRef.current.mode = 'default';
-          }}
-          className="lbl text-[var(--ink)] bg-transparent border-0 p-0 hover:text-[var(--cobalt)] transition-colors"
-        >
-          OPEN CASE STUDY IN SECTION 03 ↓
-        </button>
-      </div>
-
-      {/* Custom Interactive Cursor (desktop pointer:fine only) */}
-      <div ref={cursorRef} className="custom-cursor" data-mode="hidden" aria-hidden="true">
-        <div className="custom-cursor-ring" />
-        <div className="custom-cursor-dot" />
-        <span className="custom-cursor-label">OPEN</span>
       </div>
     </section>
   );

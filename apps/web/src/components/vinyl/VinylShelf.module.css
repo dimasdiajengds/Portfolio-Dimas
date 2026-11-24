@@ -6,6 +6,7 @@
   max-height: 1080px;
   background-color: var(--paper);
   overflow: hidden;
+  contain: layout style paint;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -58,20 +59,27 @@
   top: 10vh;
 }
 
-/* Soft Floor Shadow beneath the curved bowl shelf */
+/* Soft Floor Shadow beneath the curved bowl shelf (replaces expensive per-frame drop-shadow filter) */
 .floorShadow {
   position: absolute;
   left: 50%;
-  top: calc(var(--cy) + var(--H) * 0.49);
+  top: calc(var(--cy) + var(--H) * 0.47);
   width: min(96vw, calc(var(--H) * 3.9));
-  height: calc(var(--H) * 0.24);
+  height: calc(var(--H) * 0.28);
   transform: translateX(-50%);
-  background: radial-gradient(
-    50% 50% at 50% 40%,
-    rgba(40, 32, 20, 0.28),
-    rgba(40, 32, 20, 0.09) 55%,
-    transparent 72%
-  );
+  background:
+    radial-gradient(
+      24% 48% at 50% 34%,
+      rgba(20, 16, 10, 0.22),
+      rgba(20, 16, 10, 0.06) 58%,
+      transparent 76%
+    ),
+    radial-gradient(
+      50% 50% at 50% 42%,
+      rgba(40, 32, 20, 0.24),
+      rgba(40, 32, 20, 0.08) 55%,
+      transparent 72%
+    );
   pointer-events: none;
   z-index: 2;
 }
@@ -94,6 +102,7 @@
   height: calc(var(--H) + 100px);
   perspective: 1400px;
   perspective-origin: 50% 50%;
+  contain: layout style;
   z-index: 10;
   touch-action: pan-y;
 }
@@ -115,8 +124,6 @@
   width: 0;
   height: 0;
   transform-style: preserve-3d;
-  --shade: 0;
-  will-change: transform;
 }
 
 .face {
@@ -126,14 +133,6 @@
   background-color: transparent;
   background-repeat: no-repeat;
   pointer-events: auto;
-  filter: brightness(calc(1 - var(--shade) * 0.65));
-}
-
-/* Selective GPU drop-shadow ONLY on active/nearby records (60fps performance budget) */
-.item[data-near="1"] .face {
-  filter:
-    drop-shadow(0 24px 30px rgba(20, 16, 10, 0.28))
-    brightness(calc(1 - var(--shade) * 0.65));
 }
 
 .front {
@@ -151,32 +150,6 @@
   backface-visibility: visible;
   pointer-events: none;
   box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.14);
-}
-
-/* Play Ring on lower-left corner of active vinyl jacket */
-.playRing {
-  position: absolute;
-  width: 42px;
-  height: 42px;
-  margin-left: -21px;
-  margin-top: -21px;
-  border-radius: 9999px;
-  border: 1.5px solid var(--ink);
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 22;
-  color: var(--ink);
-  padding: 0;
-  will-change: transform;
-  transition: background-color 0.25s var(--ease), border-color 0.25s var(--ease), color 0.25s var(--ease);
-}
-
-.playRing:hover {
-  background: var(--cobalt);
-  border-color: var(--cobalt);
-  color: var(--paper);
 }
 
 /* Caption Grid below active vinyl */
@@ -349,6 +322,7 @@
 
 .timelineDot {
   position: absolute;
+  left: 0;
   top: 12px;
   width: 9px;
   height: 9px;
@@ -357,7 +331,7 @@
   border-radius: 9999px;
   background-color: var(--cobalt);
   pointer-events: none;
-  will-change: left;
+  will-change: transform;
 }
 
 .timelineHit {
