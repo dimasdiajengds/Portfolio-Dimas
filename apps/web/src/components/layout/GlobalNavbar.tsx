@@ -10,11 +10,22 @@ export function GlobalNavbar() {
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 24);
+      const projectsEl = document.getElementById('projects');
+      if (projectsEl) {
+        const rect = projectsEl.getBoundingClientRect();
+        // Transition navbar to light theme smoothly as user approaches the white section
+        setScrolled(rect.top <= 160);
+      } else {
+        setScrolled(window.scrollY > window.innerHeight * 0.78);
+      }
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -44,7 +55,7 @@ export function GlobalNavbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
           scrolled
             ? 'bg-white/95 border-b border-[var(--hairline)]'
             : 'bg-transparent border-b border-transparent'
@@ -54,13 +65,21 @@ export function GlobalNavbar() {
           {/* Left: Minimalist Brand (D! identity) */}
           <a
             href="#hero"
-            className="flex items-center gap-3.5 text-[var(--ink)] group focus:outline-none"
+            className={`flex items-center gap-3.5 group focus:outline-none transition-colors duration-300 ${
+              scrolled ? 'text-[var(--ink)]' : 'text-white'
+            }`}
             onClick={() => setMenuOpen(false)}
           >
-            <span className="inline-flex items-center justify-center h-[30px] px-2.5 border-[1.5px] border-[var(--ink)] text-[13px] font-bold tracking-[0.04em] leading-none transition-colors duration-300 group-hover:bg-[var(--ink)] group-hover:text-[var(--paper)]">
+            <span
+              className={`inline-flex items-center justify-center h-[30px] px-2.5 border-[1.5px] text-[13px] font-bold tracking-[0.04em] leading-none transition-colors duration-300 ${
+                scrolled
+                  ? 'border-[var(--ink)] group-hover:bg-[var(--ink)] group-hover:text-[var(--paper)]'
+                  : 'border-white group-hover:bg-white group-hover:text-[#0A0A0A]'
+              }`}
+            >
               {PROFILE.brandMark}
             </span>
-            <span className="text-[14px] md:text-[15px] font-bold tracking-[-0.01em] text-[var(--ink)]">
+            <span className="text-[14px] md:text-[15px] font-bold tracking-[-0.01em]">
               {PROFILE.shortName}
             </span>
           </a>
@@ -77,9 +96,13 @@ export function GlobalNavbar() {
                   key={link.id}
                   href={link.href}
                   className={`relative py-1.5 text-[15px] font-semibold tracking-[-0.01em] transition-colors duration-200 ${
-                    isActive
-                      ? 'text-[var(--ink)]'
-                      : 'text-[var(--ink)]/55 hover:text-[var(--ink)]'
+                    scrolled
+                      ? isActive
+                        ? 'text-[var(--ink)]'
+                        : 'text-[var(--ink)]/55 hover:text-[var(--ink)]'
+                      : isActive
+                        ? 'text-white'
+                        : 'text-white/65 hover:text-white'
                   }`}
                 >
                   {link.label}
@@ -97,7 +120,11 @@ export function GlobalNavbar() {
           <div className="flex items-center gap-4">
             <a
               href={PROFILE.navCta.href}
-              className="hidden md:inline-flex items-center gap-2.5 h-11 px-6 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[13.5px] font-semibold tracking-[-0.01em] hover:bg-[var(--cobalt)] transition-colors duration-300"
+              className={`hidden md:inline-flex items-center gap-2.5 h-11 px-6 rounded-full text-[13.5px] font-semibold tracking-[-0.01em] transition-colors duration-300 ${
+                scrolled
+                  ? 'bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--cobalt)]'
+                  : 'bg-white text-[#0A0A0A] hover:bg-[var(--cobalt)] hover:text-white'
+              }`}
             >
               <span>{PROFILE.navCta.label}</span>
               <span aria-hidden="true">↗</span>
@@ -108,7 +135,9 @@ export function GlobalNavbar() {
               aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((prev) => !prev)}
-              className="md:hidden w-11 h-11 flex flex-col items-center justify-center gap-[7px] text-[var(--ink)]"
+              className={`md:hidden w-11 h-11 flex flex-col items-center justify-center gap-[7px] transition-colors duration-300 ${
+                scrolled || menuOpen ? 'text-[var(--ink)]' : 'text-white'
+              }`}
             >
               <span
                 className={`block w-[26px] h-[2px] bg-current transition-transform duration-300 ${

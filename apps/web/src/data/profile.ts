@@ -12,8 +12,6 @@ export const PROFILE = {
       'fast interfaces that feel physical.',
       'reliable web & cloud architectures.',
     ],
-    subheadline:
-      'Software engineer crafting minimalist web applications and cloud systems.',
     primaryCta: {
       label: 'Explore Projects',
       href: '#projects',

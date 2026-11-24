@@ -9,7 +9,7 @@ export function HeroSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const inView = useInViewport(sectionRef, '100px 0px');
 
-  const { displayedText, hasTypedOnce } = useTypewriter({
+  const { displayedText, hasCompletedFirst } = useTypewriter({
     phrases: PROFILE.hero.typingPhrases,
     active: inView,
     typeSpeedMs: 46,
@@ -22,14 +22,23 @@ export function HeroSection() {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-[100svh] w-full flex flex-col justify-between px-5 md:px-12 pt-32 md:pt-40 pb-8 md:pb-10 max-w-[1680px] mx-auto"
+      className="relative min-h-[100svh] w-full bg-[#0A0A0A] text-white flex flex-col items-center justify-center px-5 md:px-12 pt-20 md:pt-24 pb-36 md:pb-44 overflow-hidden"
     >
-      {/* Center: Minimalist Live-Typing Hero Stage */}
-      <div className="my-auto py-12 md:py-20 max-w-[1180px]">
-        <h1 className="text-[clamp(40px,7vw,92px)] font-bold leading-[1.02] tracking-[-0.035em] text-[var(--ink)]">
-          <span className="block text-[var(--ink)]">{PROFILE.hero.staticPrefix}</span>
+      {/* Center: Full-Black Minimalist Live-Typing Hero Stage (positioned at optical eye level) */}
+      <div className="relative z-10 mx-auto w-full max-w-[1100px] flex flex-col items-center text-center">
+        <h1 className="w-full text-[clamp(38px,6.8vw,88px)] font-bold leading-[1.04] tracking-[-0.035em] text-white">
           <span
-            className="block min-h-[2.15em] sm:min-h-[1.12em] text-[var(--ink)]/75 mt-1"
+            className={`block text-white transition-all duration-[900ms] will-change-transform ${
+              hasCompletedFirst
+                ? 'opacity-100 scale-100 translate-y-0'
+                : 'opacity-0 scale-[0.94] translate-y-3 pointer-events-none'
+            }`}
+            style={{ transitionTimingFunction: 'var(--ease)' }}
+          >
+            {PROFILE.hero.staticPrefix}
+          </span>
+          <span
+            className="block min-h-[2.2em] sm:min-h-[1.15em] text-white/90 mt-1"
             aria-live="polite"
           >
             {displayedText}
@@ -37,56 +46,39 @@ export function HeroSection() {
           </span>
         </h1>
 
-        <div className="mt-8 md:mt-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="max-w-[46ch]">
-            <span className="mask-line">
-              <p
-                className="text-[18px] md:text-[21px] font-medium leading-[1.45] tracking-[-0.015em] text-[var(--muted)] transition-transform duration-700"
-                style={{
-                  transform: hasTypedOnce ? 'translateY(0%)' : 'translateY(108%)',
-                  transitionTimingFunction: 'var(--ease)',
-                }}
-              >
-                {PROFILE.hero.subheadline}
-              </p>
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3.5">
-            <a
-              href={PROFILE.hero.primaryCta.href}
-              className="inline-flex items-center gap-3 h-12 px-7 rounded-full bg-[var(--ink)] text-[var(--paper)] text-[14px] font-semibold tracking-[-0.01em] hover:bg-[var(--cobalt)] transition-colors duration-300"
-            >
-              <span>{PROFILE.hero.primaryCta.label}</span>
-              <span aria-hidden="true">↓</span>
-            </a>
-            <a
-              href={PROFILE.hero.secondaryCta.href}
-              className="inline-flex items-center gap-2 h-12 px-7 rounded-full border-[1.5px] border-[var(--ink)] text-[var(--ink)] text-[14px] font-semibold tracking-[-0.01em] hover:border-[var(--cobalt)] hover:text-[var(--cobalt)] transition-colors duration-300"
-            >
-              <span>{PROFILE.hero.secondaryCta.label}</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Spatial Anchor Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[var(--hairline)] pt-5">
-        <div className="flex items-center gap-3 text-[13px] font-medium text-[var(--muted)]">
-          <span className="w-2 h-2 rounded-full bg-[var(--cobalt)]" />
-          <span className="text-[var(--ink)] font-semibold">{PROFILE.location}</span>
-          <span>/</span>
-          <span>{PROFILE.availability}</span>
-        </div>
-
-        <a
-          href="#projects"
-          className="inline-flex items-center gap-2.5 text-[13px] font-semibold text-[var(--ink)] hover:text-[var(--cobalt)] transition-colors"
+        <div
+          className={`mt-10 flex flex-wrap items-center justify-center gap-3.5 transition-all duration-[1000ms] delay-150 will-change-transform ${
+            hasCompletedFirst
+              ? 'opacity-100 scale-100 translate-y-0'
+              : 'opacity-0 scale-[0.94] translate-y-4 pointer-events-none'
+          }`}
+          style={{ transitionTimingFunction: 'var(--ease)' }}
         >
-          <span>Scroll to Projects</span>
-          <span aria-hidden="true">↓</span>
-        </a>
+          <a
+            href={PROFILE.hero.primaryCta.href}
+            className="inline-flex items-center gap-3 h-12 px-7 rounded-full bg-white text-[#0A0A0A] text-[14px] font-semibold tracking-[-0.01em] hover:bg-[var(--cobalt)] hover:text-white transition-colors duration-300"
+          >
+            <span>{PROFILE.hero.primaryCta.label}</span>
+            <span aria-hidden="true">↓</span>
+          </a>
+          <a
+            href={PROFILE.hero.secondaryCta.href}
+            className="inline-flex items-center gap-2 h-12 px-7 rounded-full border-[1.5px] border-white/40 text-white text-[14px] font-semibold tracking-[-0.01em] hover:border-white hover:bg-white/10 transition-colors duration-300"
+          >
+            <span>{PROFILE.hero.secondaryCta.label}</span>
+          </a>
+        </div>
       </div>
+
+      {/* Smooth Bottom Gradient Transition (Black #0A0A0A -> White #FFFFFF) */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 md:h-56"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(10, 10, 10, 0) 0%, rgba(45, 45, 45, 0.35) 38%, rgba(200, 200, 200, 0.72) 72%, #FFFFFF 100%)',
+        }}
+      />
     </section>
   );
 }
