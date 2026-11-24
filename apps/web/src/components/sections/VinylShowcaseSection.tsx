@@ -106,7 +106,6 @@ export function VinylShowcaseSection({
   const playRingRef = useRef<HTMLButtonElement | null>(null);
   const timelineDotRef = useRef<HTMLDivElement | null>(null);
   const timelineTrackRef = useRef<HTMLDivElement | null>(null);
-  const cursorRef = useRef<HTMLDivElement | null>(null);
 
   const titleMaskRef = useRef<HTMLDivElement | null>(null);
   const subMaskRef = useRef<HTMLDivElement | null>(null);
@@ -132,9 +131,8 @@ export function VinylShowcaseSection({
   const hoveredVirtualRef = useRef<number>(-1);
   const timelineYearRef = useRef<number>(PROJECTS[INITIAL_PROJECT_INDEX].timelineYear);
 
-  // Pointer, tilt, drag, & custom cursor refs
-  const pointerRef = useRef({ x: -200, y: -200, inside: false, mode: 'hidden' as string });
-  const cursorPosRef = useRef({ x: -200, y: -200 });
+  // Pointer, tilt, & drag refs
+  const pointerRef = useRef({ x: -200, y: -200, inside: false });
   const tiltRef = useRef({ x: 0, y: 0 });
   const dragRef = useRef({
     active: false,
@@ -352,9 +350,6 @@ export function VinylShowcaseSection({
   // Main Viewport-Gated requestAnimationFrame Loop (0% idle CPU when scrolled away!)
   useEffect(() => {
     if (!inView) {
-      if (cursorRef.current) {
-        cursorRef.current.setAttribute('data-mode', 'hidden');
-      }
       return;
     }
 
@@ -534,29 +529,6 @@ export function VinylShowcaseSection({
         dot.style.left = `${Math.max(0, Math.min(100, pct)).toFixed(3)}%`;
       }
 
-      // 8. Custom cursor smooth follow (1 - e^(-16dt))
-      const cursorEl = cursorRef.current;
-      if (cursorEl) {
-        if (!ptr.inside) {
-          cursorEl.setAttribute('data-mode', 'hidden');
-        } else {
-          const cEase = reducedMotion ? 1 : 1 - Math.exp(-16 * dt);
-          cursorPosRef.current.x += (ptr.x - cursorPosRef.current.x) * cEase;
-          cursorPosRef.current.y += (ptr.y - cursorPosRef.current.y) * cEase;
-          cursorEl.style.transform = `translate3d(${cursorPosRef.current.x.toFixed(1)}px, ${cursorPosRef.current.y.toFixed(1)}px, 0)`;
-
-          const resolvedMode =
-            ptr.mode === 'btn'
-              ? 'btn'
-              : onCover
-                ? 'open'
-                : hoveredVirtualRef.current !== -1
-                  ? 'spine'
-                  : 'default';
-          cursorEl.setAttribute('data-mode', resolvedMode);
-        }
-      }
-
       rafId = window.requestAnimationFrame(loop);
     };
 
@@ -665,7 +637,7 @@ export function VinylShowcaseSection({
       id="projects"
       ref={sectionRef}
       aria-label="Curved 3D Vinyl LP Project Showcase"
-      className={`${styles.section} vinyl-cursor-zone`}
+      className={styles.section}
       onPointerMove={(e) => {
         pointerRef.current.x = e.clientX;
         pointerRef.current.y = e.clientY;
@@ -674,26 +646,15 @@ export function VinylShowcaseSection({
       onPointerEnter={(e) => {
         pointerRef.current.x = e.clientX;
         pointerRef.current.y = e.clientY;
-        cursorPosRef.current.x = e.clientX;
-        cursorPosRef.current.y = e.clientY;
         pointerRef.current.inside = true;
       }}
       onPointerLeave={() => {
         pointerRef.current.inside = false;
-        pointerRef.current.mode = 'hidden';
         hoveredVirtualRef.current = -1;
       }}
     >
       {/* Hidden Height Probe */}
       <div ref={probeRef} className={styles.probe} aria-hidden="true" />
-
-      {/* Section Top Metadata */}
-      <div className={styles.sectionMeta}>
-        <span className="lbl text-[var(--ink)]">02 / SELECTED VINYL PROJECTS</span>
-        <span className={`lbl ${styles.sectionMetaHint}`}>
-          DRAG OR USE ← / → TO SPIN · CLICK CENTER VINYL TO OPEN DETAILS
-        </span>
-      </div>
 
       {/* Giant Halftone Vertical Background Typography */}
       <div aria-hidden="true" className={`${styles.halftone} ${styles.halftoneLeft}`}>
@@ -787,12 +748,6 @@ export function VinylShowcaseSection({
         aria-label={`Open ${activeProject.title} project details`}
         className={styles.playRing}
         onClick={() => onOpenProject(activeIdxRef.current)}
-        onPointerEnter={() => {
-          pointerRef.current.mode = 'btn';
-        }}
-        onPointerLeave={() => {
-          pointerRef.current.mode = 'default';
-        }}
       >
         <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
           <path d="M3 1.8L10.5 6L3 10.2V1.8Z" />
@@ -805,12 +760,6 @@ export function VinylShowcaseSection({
         aria-label="Previous project"
         className={`${styles.arrowBtn} ${styles.arrowPrev}`}
         onClick={() => stepBy(-1)}
-        onPointerEnter={() => {
-          pointerRef.current.mode = 'btn';
-        }}
-        onPointerLeave={() => {
-          pointerRef.current.mode = 'default';
-        }}
       >
         <svg width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" strokeWidth="1.2">
           <path d="M6 1L1 6l5 5M1 6h23" />
@@ -822,12 +771,6 @@ export function VinylShowcaseSection({
         aria-label="Next project"
         className={`${styles.arrowBtn} ${styles.arrowNext}`}
         onClick={() => stepBy(1)}
-        onPointerEnter={() => {
-          pointerRef.current.mode = 'btn';
-        }}
-        onPointerLeave={() => {
-          pointerRef.current.mode = 'default';
-        }}
       >
         <svg width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" strokeWidth="1.2">
           <path d="M18 1l5 5-5 5M23 6H0" />
@@ -882,40 +825,7 @@ export function VinylShowcaseSection({
           aria-label="Jump along 2023 to 2026 project timeline"
           className={styles.timelineHit}
           onClick={handleTimelineClick}
-          onPointerEnter={() => {
-            pointerRef.current.mode = 'btn';
-          }}
-          onPointerLeave={() => {
-            pointerRef.current.mode = 'default';
-          }}
         />
-      </div>
-
-      {/* Subtle Scroll Continuation Cue to Section 03 */}
-      <div className={styles.shelfFooterBar}>
-        <span className="lbl text-[var(--muted)]">
-          {activeProject.code} / 0{PROJECT_COUNT}
-        </span>
-        <button
-          type="button"
-          onClick={() => onOpenProject(activeIdxRef.current)}
-          onPointerEnter={() => {
-            pointerRef.current.mode = 'btn';
-          }}
-          onPointerLeave={() => {
-            pointerRef.current.mode = 'default';
-          }}
-          className="lbl text-[var(--ink)] bg-transparent border-0 p-0 hover:text-[var(--cobalt)] transition-colors"
-        >
-          OPEN CASE STUDY IN SECTION 03 ↓
-        </button>
-      </div>
-
-      {/* Custom Interactive Cursor (desktop pointer:fine only) */}
-      <div ref={cursorRef} className="custom-cursor" data-mode="hidden" aria-hidden="true">
-        <div className="custom-cursor-ring" />
-        <div className="custom-cursor-dot" />
-        <span className="custom-cursor-label">OPEN</span>
       </div>
     </section>
   );

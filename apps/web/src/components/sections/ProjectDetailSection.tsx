@@ -7,19 +7,16 @@ import { InkRevealPoster } from '@/components/vinyl/InkRevealPoster';
 interface ProjectDetailSectionProps {
   activeIndex: number;
   revealNonce: number;
-  onSelectIndex: (index: number) => void;
+  onSelectIndex?: (index: number) => void;
 }
 
 export function ProjectDetailSection({
   activeIndex,
   revealNonce,
-  onSelectIndex,
 }: ProjectDetailSectionProps) {
   const [showBackPreview, setShowBackPreview] = useState(false);
 
   const project = PROJECTS[activeIndex] ?? PROJECTS[0];
-  const prevIdx = (activeIndex + PROJECTS.length - 1) % PROJECTS.length;
-  const nextIdx = (activeIndex + 1) % PROJECTS.length;
   const [col, row] = project.backCell;
 
   const revealKey = `${project.id}-${revealNonce}`;
@@ -31,48 +28,8 @@ export function ProjectDetailSection({
       className="relative w-full min-h-[100svh] bg-[var(--sheet)] border-t border-[var(--hairline)] px-4 md:px-9 py-20 md:py-28"
     >
       <div className="max-w-[1520px] mx-auto">
-        {/* Top Utility & Project Switcher Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[var(--hairline)]">
-          <div className="flex items-center gap-4">
-            <span className="lbl text-[var(--ink)]">03 / PROJECT DETAIL</span>
-            <span className="w-6 h-px bg-[var(--ink)]/30" />
-            <span className="lbl text-[var(--muted)]">
-              {project.code} / 0{PROJECTS.length}
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                setShowBackPreview(false);
-                onSelectIndex(prevIdx);
-              }}
-              className="box-btn lbl text-[var(--ink)] hover:border-[var(--cobalt)] hover:text-[var(--cobalt)] transition-colors h-8 px-3 bg-transparent cursor-pointer"
-            >
-              ← {PROJECTS[prevIdx].title.split(' ')[0]}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setShowBackPreview(false);
-                onSelectIndex(nextIdx);
-              }}
-              className="box-btn lbl text-[var(--ink)] hover:border-[var(--cobalt)] hover:text-[var(--cobalt)] transition-colors h-8 px-3 bg-transparent cursor-pointer"
-            >
-              {PROJECTS[nextIdx].title.split(' ')[0]} →
-            </button>
-            <a
-              href="#projects"
-              className="inline-flex items-center h-8 px-3 border border-[var(--ink)] text-[var(--ink)] lbl hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors"
-            >
-              ↑ BACK TO SHELF
-            </a>
-          </div>
-        </div>
-
         {/* Two-Column Editorial Case Study Grid (matches Detail Sheet spec) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 pt-12 md:pt-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Right Column comes FIRST on phones (order-1 lg:order-2) */}
           <div className="order-1 lg:order-2 lg:col-span-6 lg:sticky lg:top-28">
             <div className="relative flex flex-col items-center justify-center py-6 md:py-10 border border-[var(--hairline)] bg-[var(--paper)] px-4 sm:px-8">
@@ -135,15 +92,6 @@ export function ProjectDetailSection({
             key={revealKey}
             className="order-2 lg:order-1 lg:col-span-6 flex flex-col gap-6 max-w-[580px]"
           >
-            <span className="mask-line">
-              <span
-                className="animate-mask-up lbl text-[var(--muted)]"
-                style={{ animationDelay: '60ms' }}
-              >
-                {project.subtitle} · {project.code}
-              </span>
-            </span>
-
             <span className="mask-line">
               <h2
                 className="animate-mask-up font-bold tracking-[-0.03em] leading-[1.02] text-[var(--ink)] text-[clamp(40px,5.2vw,76px)]"
@@ -221,11 +169,6 @@ export function ProjectDetailSection({
                 ))}
               </div>
             </div>
-
-            {/* Author Credit */}
-            <p className="text-[14px] font-normal tracking-[-0.005em] text-[var(--muted)] pt-2">
-              Designed &amp; developed by Dimas Di Ajeng Duwi Saputra.
-            </p>
 
             {/* Primary Black-White Action Buttons (Cobalt on hover) */}
             <div className="flex flex-wrap items-center gap-3 pt-1">
