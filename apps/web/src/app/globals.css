@@ -101,16 +101,16 @@ body {
   animation: caretBlink 0.95s steps(1, end) infinite;
 }
 
-/* Global paper grain overlay (single static layer, zero pointer events) */
+/* Global paper grain overlay (compositor-only alpha, avoids expensive full-screen blend readbacks) */
 .paper-grain {
   position: fixed;
   inset: 0;
   z-index: 40;
   pointer-events: none;
-  mix-blend-mode: multiply;
-  opacity: 0.55;
+  opacity: 0.28;
   background-repeat: repeat;
   background-size: 220px 220px;
+  transform: translateZ(0);
 }
 
 @media (prefers-reduced-motion: reduce) {

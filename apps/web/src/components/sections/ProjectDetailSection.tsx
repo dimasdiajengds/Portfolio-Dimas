@@ -1,25 +1,47 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PROJECTS, VINYL_BACKS_SHEET } from '@/data/projects';
-import { InkRevealPoster } from '@/components/vinyl/InkRevealPoster';
+import { VinylTurntable } from '@/components/vinyl/VinylTurntable';
+
+type DetailVisualMode = 'turntable' | 'front' | 'back';
 
 interface ProjectDetailSectionProps {
   activeIndex: number;
   revealNonce: number;
+  incomingFlight?: boolean;
+  landNonce?: number;
+  landAngleDeg?: number;
   onSelectIndex?: (index: number) => void;
 }
 
 export function ProjectDetailSection({
   activeIndex,
   revealNonce,
+  incomingFlight = false,
+  landNonce = 0,
+  landAngleDeg = 0,
 }: ProjectDetailSectionProps) {
-  const [showBackPreview, setShowBackPreview] = useState(false);
+  const [viewMode, setViewMode] = useState<DetailVisualMode>('turntable');
+
+  // Whenever a vinyl is clicked/ejected from Section 02, always ensure Turntable view is active to receive it
+  useEffect(() => {
+    if (incomingFlight || revealNonce > 0) {
+      setViewMode('turntable');
+    }
+  }, [incomingFlight, revealNonce]);
 
   const project = PROJECTS[activeIndex] ?? PROJECTS[0];
   const [col, row] = project.backCell;
 
   const revealKey = `${project.id}-${revealNonce}`;
+
+  const modeLabel =
+    viewMode === 'turntable'
+      ? 'NOW SPINNING · TURNTABLE'
+      : viewMode === 'front'
+        ? 'VINYL EDITION (A-SIDE)'
+        : 'VINYL BACK EDITION (B-SIDE)';
 
   return (
     <section
@@ -32,44 +54,71 @@ export function ProjectDetailSection({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Right Column comes FIRST on phones (order-1 lg:order-2) */}
           <div className="order-1 lg:order-2 lg:col-span-6 lg:sticky lg:top-28">
-            <div className="relative flex flex-col items-center justify-center py-6 md:py-10 border border-[var(--hairline)] bg-[var(--paper)] px-4 sm:px-8">
-              <div className="w-full flex items-center justify-between mb-6">
-                <span className="lbl text-[var(--muted)]">
-                  {showBackPreview ? 'VINYL BACK EDITION (B-SIDE)' : 'VINYL EDITION (A-SIDE)'}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setShowBackPreview((v) => !v)}
-                  className="lbl text-[var(--ink)] border border-[var(--ink)]/35 px-3 py-1.5 hover:border-[var(--cobalt)] hover:bg-[var(--cobalt)] hover:text-[var(--paper)] transition-colors cursor-pointer bg-transparent"
-                >
-                  {showBackPreview ? 'SHOW FRONT ↺' : 'FLIP BACK ↻'}
-                </button>
+            <div className="relative flex flex-col items-center justify-center py-6 md:py-9 border border-[var(--hairline)] bg-[var(--paper)] px-4 sm:px-8">
+              <div className="w-full flex flex-wrap items-center justify-between gap-3 mb-6">
+                <span className="lbl text-[var(--muted)]">{modeLabel}</span>
+                <div className="inline-flex items-center border border-[var(--ink)]/25">
+                  {(
+                    [
+                      ['turntable', 'TURNTABLE'],
+                      ['front', 'FRONT'],
+                      ['back', 'BACK'],
+                    ] as const
+                  ).map(([mode, label]) => {
+                    const active = viewMode === mode;
+                    return (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setViewMode(mode)}
+                        className={`lbl px-2.5 py-1.5 transition-colors cursor-pointer ${
+                          active
+                            ? 'bg-[var(--ink)] text-[var(--paper)]'
+                            : 'bg-transparent text-[var(--ink)] hover:bg-[var(--ink)]/8'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              {showBackPreview ? (
+              {viewMode === 'turntable' ? (
+                <div className="w-full flex justify-center py-1">
+                  <VinylTurntable
+                    project={project}
+                    incomingFlight={incomingFlight}
+                    landNonce={landNonce}
+                    startAngleDeg={landAngleDeg}
+                  />
+                </div>
+              ) : viewMode === 'front' ? (
+                <div className="w-full max-w-[640px] flex items-center justify-center py-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={project.frontImage}
+                    alt={`${project.title} front vinyl sleeve`}
+                    className="w-full h-auto max-h-[52vh] object-contain select-none"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              ) : (
                 <div
-                  className="w-full max-w-[640px] aspect-[17/10] bg-no-repeat"
+                  className="w-full max-w-[640px] aspect-[17/10] bg-no-repeat my-3"
                   role="img"
                   aria-label={`${project.title} back vinyl sleeve`}
                   style={{
                     backgroundImage: `url("${VINYL_BACKS_SHEET}")`,
                     backgroundSize: '400% 200%',
                     backgroundPosition: `${(col / 3) * 100}% ${row * 100}%`,
-                    filter: 'drop-shadow(0 24px 30px rgba(20, 16, 10, 0.22))',
                   }}
                 />
-              ) : (
-                <div className="w-full max-w-[680px]">
-                  <InkRevealPoster
-                    imageSrc={project.frontImage}
-                    alt={`${project.title} vinyl LP artwork`}
-                    revealKey={revealKey}
-                  />
-                </div>
               )}
 
               {/* Subtle Palette Swatch & Placeholder Screenshot Slot Notice */}
-              <div className="w-full mt-8 pt-4 border-t border-[var(--hairline)] flex flex-wrap items-center justify-between gap-3">
+              <div className="w-full mt-7 pt-4 border-t border-[var(--hairline)] flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   <span
                     className="inline-block w-3.5 h-3.5 border border-[var(--rule)]/30"
@@ -81,7 +130,9 @@ export function ProjectDetailSection({
                   </span>
                 </div>
                 <span className="lbl text-[var(--muted)]">
-                  [PLACEHOLDER: UI SCREENSHOT GALLERY SLOT]
+                  {viewMode === 'turntable'
+                    ? 'CLICK DISC OR ARM TO PLAY / PAUSE'
+                    : '[PLACEHOLDER: UI SCREENSHOT GALLERY SLOT]'}
                 </span>
               </div>
             </div>
