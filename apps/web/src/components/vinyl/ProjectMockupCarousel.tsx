@@ -240,7 +240,7 @@ export function ProjectMockupCarousel({ project }: ProjectMockupCarouselProps) {
 
   return (
     <div
-      className="mt-10 md:mt-12 mx-auto w-full max-w-[1380px]"
+      className="mt-2 md:mt-3 mx-auto w-full max-w-[1380px]"
       aria-label={`${project.title} mockup showcase`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

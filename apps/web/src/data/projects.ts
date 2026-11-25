@@ -33,9 +33,7 @@ export interface ProjectItem {
   /** Up to 3 widescreen (16:9) mockup showcase slides displayed beneath the project details */
   mockups: readonly ProjectMockupSlide[];
   synopsis: string;
-  challenge: string;
-  solution: string;
-  highlights: string[];
+  whatIDo: string;
   techStack: string[];
   demoUrl: string;
   repoUrl: string;
@@ -49,7 +47,7 @@ export const PROJECTS: readonly ProjectItem[] = [
     id: 'sebatik',
     index: 0,
     code: 'D! / 01',
-    title: 'Sebatik',
+    title: 'SEBATIK',
     subtitle: 'RUMAH BATIK DIGITAL PLATFORM FOR SALES',
     year: 2024,
     timelineYear: 2024.2,
@@ -76,16 +74,9 @@ export const PROJECTS: readonly ProjectItem[] = [
       },
     ],
     synopsis:
-      '[PLACEHOLDER] A digital platform and interactive catalog dedicated to preserving, exploring, and showcasing Indonesian Batik motifs and cultural craftsmanship with structured regional taxonomy.',
-    challenge:
-      '[PLACEHOLDER] Traditional batik documentation is often scattered across static archives, making motif discovery and educational reference difficult for modern audiences.',
-    solution:
-      '[PLACEHOLDER] Engineered a clean, searchable web catalog featuring curated visual motif breakdowns, responsive filtering, and fast image delivery.',
-    highlights: [
-      '[PLACEHOLDER] Interactive Batik motif catalog with regional & philosophical metadata',
-      '[PLACEHOLDER] Fast search & category filtering built with modular frontend components',
-      '[PLACEHOLDER] Responsive editorial layout tailored for mobile & desktop exploration',
-    ],
+      'Sebatik is an Android mobile app that identifies Indonesian batik motifs from photos, explains regional patterns and heritage, displays available stock, and directs users straight to sales.',
+    whatIDo:
+      'I handled the backend by building a prediction API to serve the Machine Learning model directly to the mobile app. I also developed database API endpoints to fetch and display stored batik catalog data, and designed the cloud compute architecture on Google Cloud Platform (GCP).',
     techStack: ['React', 'JavaScript', 'Tailwind CSS', 'REST API', 'MySQL'],
     demoUrl: '#contact',
     repoUrl: '#contact',
@@ -95,7 +86,7 @@ export const PROJECTS: readonly ProjectItem[] = [
     id: 'skynet',
     index: 1,
     code: 'D! / 02',
-    title: 'Skynet',
+    title: 'SKYNET',
     subtitle: 'GENESYS CLOUD CX INTEGRATION',
     year: 2024,
     timelineYear: 2024.7,
@@ -117,16 +108,9 @@ export const PROJECTS: readonly ProjectItem[] = [
       },
     ],
     synopsis:
-      '[PLACEHOLDER] Enterprise omnichannel contact center architecture powered by Genesys Cloud (Solutif / MSIB Kampus Merdeka), integrating real-time telemetry, routing automation, and agent workspace tooling.',
-    challenge:
-      '[PLACEHOLDER] Coordinating multi-channel customer interactions and real-time queue metrics requires reliable cloud routing flows and low-latency API orchestration.',
-    solution:
-      '[PLACEHOLDER] Configured Genesys Cloud architect flows, API webhooks, and monitoring utilities to streamline agent routing and customer experience visibility.',
-    highlights: [
-      '[PLACEHOLDER] Omnichannel routing & IVR flow configuration on Genesys Cloud CX',
-      '[PLACEHOLDER] Real-time telemetry & queue analytics integration via Platform API',
-      '[PLACEHOLDER] Delivered under MSIB Kampus Merdeka collaboration with Solutif',
-    ],
+      'SKYNET is a customer experience solution built on Genesys Cloud that connects customers directly with CS agents. It enables full CRUD management for customer profiles, payment records, activity logs, and more.',
+    whatIDo:
+      'I designed the core system architecture framework to ensure smooth implementation on the Genesys Cloud platform. I also handled the technical integration between Genesys Cloud and our custom system services, enabling seamless data exchange and real-time workflows.',
     techStack: ['Genesys Cloud CX', 'Node.js', 'REST API', 'Webhooks', 'Cloud Routing'],
     demoUrl: '#contact',
     repoUrl: '#contact',
@@ -136,7 +120,7 @@ export const PROJECTS: readonly ProjectItem[] = [
     id: 'psychobot',
     index: 2,
     code: 'D! / 03',
-    title: 'Psychobot',
+    title: 'PSYCHOBOT',
     subtitle: 'AI MENTAL HEALTH COMPANION',
     year: 2025,
     timelineYear: 2025.3,
@@ -163,16 +147,9 @@ export const PROJECTS: readonly ProjectItem[] = [
       },
     ],
     synopsis:
-      '[PLACEHOLDER] An intelligent conversational assistant designed for psychological screening and empathetic daily check-ins, pairing structured behavioral prompts with calm natural dialogue.',
-    challenge:
-      '[PLACEHOLDER] Early emotional check-ins often feel clinical or intimidating; users need a calm, structured conversational interface with consistent guidance boundaries.',
-    solution:
-      '[PLACEHOLDER] Built an AI-assisted dialogue pipeline combining structured assessment prompts, sentiment-aware responses, and a distraction-free chat interface.',
-    highlights: [
-      '[PLACEHOLDER] Guided conversational check-in flow with structured screening outputs',
-      '[PLACEHOLDER] Context-aware AI dialogue designed for calm, readable sessions',
-      '[PLACEHOLDER] Lightweight session history & personal reflection summaries',
-    ],
+      'Psychobot is a web-based system designed to identify signs of social media addiction by analyzing users behavioral patterns across the social media apps they actively use, helping raise mental health awareness.',
+    whatIDo:
+      'I integrated the Gemini LLM into the Psychobot website by implementing a clean, configurable API key placeholder for flexible and secure setup. On the frontend, I also wrote custom design scripts to style the website border lines, giving the interface a polished, structured look.',
     techStack: ['Python', 'NLP / LLM API', 'Next.js', 'TypeScript', 'PostgreSQL'],
     demoUrl: '#contact',
     repoUrl: '#contact',
@@ -209,16 +186,9 @@ export const PROJECTS: readonly ProjectItem[] = [
       },
     ],
     synopsis:
-      '[PLACEHOLDER] A comprehensive Java-based academic thesis software engineering project for NATASHA Pondok Kos implementing modular object-oriented architecture, tenant records, billing automation, and analytical reporting.',
-    challenge:
-      '[PLACEHOLDER] Manual boarding-house bookkeeping leads to billing delays, occupancy tracking errors, and fragmented tenant records across spreadsheets.',
-    solution:
-      '[PLACEHOLDER] Architected a structured Java application with relational database persistence, room occupancy dashboards, automated payment receipts, and financial summaries.',
-    highlights: [
-      '[PLACEHOLDER] End-to-end room inventory, tenant onboarding, and monthly billing module',
-      '[PLACEHOLDER] Clean object-oriented Java architecture with relational SQL persistence',
-      '[PLACEHOLDER] Automated payment status tracking and printable financial reports',
-    ],
+      'NATASHA is a desktop app for womens boarding houses that manages finances, generates reports, recommends maintenance decisions from cash flow, tracks tenant records, and simplifies monthly transfer notifications.',
+    whatIDo:
+      'I built the entire application independently from end to end, owning every stage of the product lifecycle. This included system design, UI creation, development, operational management logic, and final deployment to deliver a complete, ready-to-use desktop solution.',
     techStack: ['Java', 'JDBC / SQL', 'Desktop UI', 'OOP Architecture', 'Jasper / Reports'],
     demoUrl: '#contact',
     repoUrl: '#contact',
@@ -250,16 +220,9 @@ export const PROJECTS: readonly ProjectItem[] = [
       },
     ],
     synopsis:
-      '[PLACEHOLDER] End-to-end digital storefront and operational ecosystem for Echo Space Coffee, crafted to unite specialty coffee culture with seamless menu exploration, ordering, and daily stock tracking.',
-    challenge:
-      '[PLACEHOLDER] Translating the tactile calm of a specialty coffee space into a fast digital presence while supporting reliable order and catalog management.',
-    solution:
-      '[PLACEHOLDER] Designed a sharp, brand-faithful web experience anchored on Echo Space Coffee’s cerulean-and-ink identity paired with responsive catalog & operational tools.',
-    highlights: [
-      '[PLACEHOLDER] High-contrast minimalist brand storefront tailored to Echo Space Coffee',
-      '[PLACEHOLDER] Streamlined digital menu & order workflow optimized for mobile speed',
-      '[PLACEHOLDER] Clean back-office product & operational status management',
-    ],
+      'ESC is a desktop app for Echo Space Coffee Shop that streamlines daily cash flow management, generates monthly financial reports, and supports decision-making to identify the best-performing employee across key criteria.',
+    whatIDo:
+      'I designed the complete visual experience from initial mockups and styling to interactive animations. I also built key frontend features like PDF report generation and integrated backend API endpoints to power the desktop app with live data.',
     techStack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'PostgreSQL', 'REST API'],
     demoUrl: '#contact',
     repoUrl: '#contact',
@@ -296,16 +259,9 @@ export const PROJECTS: readonly ProjectItem[] = [
       },
     ],
     synopsis:
-      '[PLACEHOLDER] A unified logbook, activity documentation, and operational journaling hub engineered to organize daily records, structured notes, and progress logs into one intuitive workspace.',
-    challenge:
-      '[PLACEHOLDER] Daily operational logs and project journals quickly become unsearchable when split across chat threads and ad-hoc documents.',
-    solution:
-      '[PLACEHOLDER] Created a structured digital logbook platform with fast chronological filtering, clean entry authoring, and exportable activity summaries.',
-    highlights: [
-      '[PLACEHOLDER] Fast structured log authoring with chronological & tag-based search',
-      '[PLACEHOLDER] Clean emerald-teal workspace built for zero-friction daily journaling',
-      '[PLACEHOLDER] Modular backend ready for team audit trails and report exports',
-    ],
+      'LogHub is an all-in-one web app built for MagangHub interns to streamline daily logbooks, attendance tracking, activity recaps, report generation, schedule calendars, and automated email notifications.',
+    whatIDo:
+      'I developed the user interface, architected the web deployment setup, and designed the payment system. I also integrated payment features, email alerts, and deployment workflows, while migrating the backend to Golang for stronger performance.',
     techStack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Prisma', 'PostgreSQL'],
     demoUrl: '#contact',
     repoUrl: '#contact',
@@ -315,7 +271,7 @@ export const PROJECTS: readonly ProjectItem[] = [
     id: 'grace',
     index: 6,
     code: 'D! / 07',
-    title: 'Grace',
+    title: 'GRACE',
     subtitle: 'GRC (Governance Risk and Compliance) TOOLS FOR IT RISK',
     year: 2026,
     timelineYear: 2026.8,
@@ -342,16 +298,9 @@ export const PROJECTS: readonly ProjectItem[] = [
       },
     ],
     synopsis:
-      '[PLACEHOLDER] The latest flagship software platform focusing on refined user experience, structured governance workflows, high-reliability orchestration, and minimalist system design.',
-    challenge:
-      '[PLACEHOLDER] Complex multi-role operational platforms frequently suffer from cluttered dashboards and slow navigation under growing data volumes.',
-    solution:
-      '[PLACEHOLDER] Built a cohesive, performance-first platform architecture emphasizing clarity, modular role-based flows, and crisp visual hierarchy.',
-    highlights: [
-      '[PLACEHOLDER] Modular enterprise workspace with role-aware navigation & clarity',
-      '[PLACEHOLDER] Strict TypeScript end-to-end data contracts and fast UI transitions',
-      '[PLACEHOLDER] Engineered for reliability, maintainability, and scale into 2026+',
-    ],
+      'GRACE is an internal web platform for XLSMART IT Risk team under IT Security. It manages GRC data, monitors Risk and KRI metrics, produces reports and summaries, and uses XLSMART local LLM for AI support.',
+    whatIDo:
+      'I built interactive UI and dashboards featuring matrix views, Sankey diagrams, and report lists, and integrated backend APIs alongside XLSMART local AI. I also handled internal server deployment, monitored performance, and developed custom features and menus for IT Security.',
     techStack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Cloud Services', 'SQL'],
     demoUrl: '#contact',
     repoUrl: '#contact',

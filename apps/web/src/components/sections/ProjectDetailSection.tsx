@@ -19,9 +19,17 @@ export function ProjectDetailSection({
   incomingFlight = false,
   landNonce = 0,
   landAngleDeg = 0,
+  onSelectIndex,
 }: ProjectDetailSectionProps) {
   const project = PROJECTS[activeIndex] ?? PROJECTS[0];
   const revealKey = `${project.id}-${revealNonce}`;
+  const totalProjects = PROJECTS.length;
+
+  const handleStepProject = (delta: number) => {
+    if (!onSelectIndex || totalProjects <= 1) return;
+    const nextIdx = (activeIndex + delta + totalProjects) % totalProjects;
+    onSelectIndex(nextIdx);
+  };
 
   // Group tech stack into rows of max 5 items (items 6+ flow neatly onto the row below)
   const techRows: string[][] = [];
@@ -35,9 +43,9 @@ export function ProjectDetailSection({
       aria-label={`Project Details: ${project.title}`}
       className="relative w-full min-h-[100svh] scroll-mt-[52px] bg-[var(--sheet)] px-4 md:px-9 pt-10 md:pt-12 pb-16 md:pb-24"
     >
-      <div className="max-w-[1520px] mx-auto">
-        {/* Top Row: Project Narrative (Left) & Fixed Turntable (Right) — top-aligned flush */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+      <div className="relative max-w-[1520px] mx-auto">
+        {/* Top Row: Project Narrative (Left) & Fixed Turntable (Right) — locked height keeps button & slide 100% static */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start lg:min-h-[548px]">
           {/* Right Column comes FIRST on phones (order-1 lg:order-2) */}
           <div className="order-1 lg:order-2 lg:col-span-6 flex items-start justify-center lg:justify-end">
             <div className="w-full max-w-[580px]">
@@ -84,20 +92,12 @@ export function ProjectDetailSection({
               </span>
             </div>
 
-            {/* Challenge & Solution */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-              <div>
-                <h3 className="lbl text-[var(--ink)] mb-2">CHALLENGE</h3>
-                <p className="text-[15.5px] font-medium leading-[1.52] tracking-[-0.01em] text-[var(--ink)]/82">
-                  {project.challenge}
-                </p>
-              </div>
-              <div>
-                <h3 className="lbl text-[var(--ink)] mb-2">SOLUTION</h3>
-                <p className="text-[15.5px] font-medium leading-[1.52] tracking-[-0.01em] text-[var(--ink)]/82">
-                  {project.solution}
-                </p>
-              </div>
+            {/* What I Do */}
+            <div className="pt-2">
+              <h3 className="lbl text-[var(--ink)] mb-2">WHAT I DO</h3>
+              <p className="text-[15.5px] font-medium leading-[1.52] tracking-[-0.01em] text-[var(--ink)]/82 max-w-[54ch]">
+                {project.whatIDo}
+              </p>
             </div>
 
             {/* Tech Stack (max 5 per row) + Thick Vertical "|" Divider + Bare Direct Links */}
@@ -162,6 +162,33 @@ export function ProjectDetailSection({
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Floating Centered Circular Project Switcher (pinned at fixed Y coordinate so text length never shifts it) */}
+        <div
+          className="relative z-20 mt-6 mb-4 lg:mt-0 lg:mb-0 lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:top-[496px] flex items-center justify-center gap-2"
+          aria-label="Switch vinyl project"
+        >
+          <button
+            type="button"
+            onClick={() => handleStepProject(-1)}
+            aria-label="Previous vinyl project"
+            className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--ink)]/25 bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--cobalt)] hover:border-[var(--cobalt)] hover:text-white transition-colors duration-200 cursor-pointer"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M10 3.5L5.5 8L10 12.5" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleStepProject(1)}
+            aria-label="Next vinyl project"
+            className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-[var(--ink)]/25 bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--cobalt)] hover:border-[var(--cobalt)] hover:text-white transition-colors duration-200 cursor-pointer"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M6 3.5L10.5 8L6 12.5" />
+            </svg>
+          </button>
         </div>
 
         {/* Centered Compact Panoramic Rounded Mockup Slide directly beneath Details & Turntable */}
