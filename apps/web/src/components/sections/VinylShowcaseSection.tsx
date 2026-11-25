@@ -31,12 +31,16 @@ const VIRTUAL_ITEMS = Array.from({ length: TOTAL_SLOTS }, (_, v) => ({
   project: PROJECTS[v % PROJECT_COUNT],
 }));
 
+const TIMELINE_START_YEAR = 2024;
+const TIMELINE_END_YEAR = 2027;
+const TIMELINE_SPAN = TIMELINE_END_YEAR - TIMELINE_START_YEAR;
+
 const TIMELINE_TICKS = Array.from({ length: 37 }, (_, i) => i);
 const MAJOR_YEARS = [
-  { year: 2023, pct: 0 },
-  { year: 2024, pct: 33.3333 },
-  { year: 2025, pct: 66.6667 },
-  { year: 2026, pct: 100 },
+  { year: 2024, pct: 0 },
+  { year: 2025, pct: 33.3333 },
+  { year: 2026, pct: 66.6667 },
+  { year: 2027, pct: 100 },
 ] as const;
 
 function swapMaskText(
@@ -148,7 +152,7 @@ export function VinylShowcaseSection({
     suppressClickUntil: 0,
   });
   const wheelSnapTimerRef = useRef<number | null>(null);
-  const wakeRef = useRef<() => void>(() => {});
+  const wakeRef = useRef<() => void>(() => { });
 
   const onActiveChangeRef = useRef(onActiveIndexChange);
   onActiveChangeRef.current = onActiveIndexChange;
@@ -361,7 +365,7 @@ export function VinylShowcaseSection({
   // Zero layout reads inside rAF, GPU-composited transforms/opacity only, auto-sleeps when settled!
   useEffect(() => {
     if (!inView) {
-      wakeRef.current = () => {};
+      wakeRef.current = () => { };
       return;
     }
 
@@ -555,7 +559,10 @@ export function VinylShowcaseSection({
             (targetYear - timelineYearRef.current) * (1 - Math.exp(-14 * dt));
         }
 
-        const ratio = Math.max(0, Math.min(1, (timelineYearRef.current - 2023) / 3));
+        const ratio = Math.max(
+          0,
+          Math.min(1, (timelineYearRef.current - TIMELINE_START_YEAR) / TIMELINE_SPAN),
+        );
         const dotPx = Math.round(ratio * timelineW * 10) / 10;
         if (dotPx !== prevDotPx) {
           prevDotPx = dotPx;
@@ -593,7 +600,7 @@ export function VinylShowcaseSection({
     wake();
 
     return () => {
-      wakeRef.current = () => {};
+      wakeRef.current = () => { };
       if (rafId) window.cancelAnimationFrame(rafId);
     };
   }, [applyMetricsToDOM, inView, reducedMotion]);
@@ -669,11 +676,11 @@ export function VinylShowcaseSection({
       const rect = frontRefs.current[v]?.getBoundingClientRect();
       const sourceRect: VinylSourceRect | undefined = rect
         ? {
-            left: rect.left,
-            top: rect.top,
-            width: rect.width,
-            height: rect.height,
-          }
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        }
         : undefined;
       onOpenProject(projectIndex, sourceRect);
     } else {
@@ -689,7 +696,7 @@ export function VinylShowcaseSection({
     if (!track) return;
     const rect = track.getBoundingClientRect();
     const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    const targetYear = 2023 + ratio * 3;
+    const targetYear = TIMELINE_START_YEAR + ratio * TIMELINE_SPAN;
 
     let bestIdx = 0;
     let bestDist = Infinity;
@@ -850,7 +857,7 @@ export function VinylShowcaseSection({
         <div ref={metaMaskRef} className={`${styles.maskBox} ${styles.metaMask}`} />
       </div>
 
-      {/* Bottom Interactive Timeline Ruler (2023 - 2026) */}
+      {/* Bottom Interactive Timeline Ruler (2024 - 2027) */}
       <div ref={timelineTrackRef} className={styles.timeline}>
         <div className={styles.timelineLine} />
 
@@ -870,13 +877,12 @@ export function VinylShowcaseSection({
         {MAJOR_YEARS.map((item, idx) => (
           <span
             key={item.year}
-            className={`${styles.yearLabel} ${
-              idx === 0
+            className={`${styles.yearLabel} ${idx === 0
                 ? styles.yearLabelFirst
                 : idx === MAJOR_YEARS.length - 1
                   ? styles.yearLabelLast
                   : ''
-            }`}
+              }`}
             style={{ left: `${item.pct}%` }}
           >
             {item.year}
@@ -887,7 +893,7 @@ export function VinylShowcaseSection({
 
         <button
           type="button"
-          aria-label="Jump along 2023 to 2026 project timeline"
+          aria-label="Jump along 2024 to 2027 project timeline"
           className={styles.timelineHit}
           onClick={handleTimelineClick}
         />
