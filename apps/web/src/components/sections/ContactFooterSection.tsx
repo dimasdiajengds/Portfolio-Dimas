@@ -31,11 +31,11 @@ export function ContactFooterSection() {
 
         {/* High-Whitespace Contact Stage */}
         <div className="py-16 md:py-24 max-w-[980px]">
-          <h2 className="text-[clamp(36px,5.6vw,76px)] font-bold leading-[1.03] tracking-[-0.03em] text-[var(--ink)]">
+          <h2 className="text-[clamp(36px,5.6vw,76px)] font-extrabold leading-[1.03] tracking-[-0.035em] text-[var(--ink)]">
             {contact.headline}
           </h2>
 
-          <p className="text-[17px] md:text-[18px] font-normal leading-[1.6] tracking-[-0.01em] text-[var(--ink)]/80 mt-6 max-w-[52ch]">
+          <p className="text-[17.5px] md:text-[18.5px] font-medium leading-[1.56] tracking-[-0.015em] text-[var(--ink)]/84 mt-6 max-w-[52ch]">
             {contact.subtext}
           </p>
 
@@ -45,10 +45,10 @@ export function ContactFooterSection() {
               onClick={handleCopyEmail}
               className="group relative overflow-hidden inline-flex items-center gap-4 h-12 px-7 border border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--cobalt)] hover:border-[var(--cobalt)] transition-colors duration-300 cursor-pointer"
             >
-              <span className="text-[15px] font-medium tracking-[-0.01em]">
+              <span className="text-[15.5px] font-semibold tracking-[-0.015em]">
                 {copied ? 'COPIED TO CLIPBOARD' : contact.email}
               </span>
-              <span className="lbl opacity-80">{copied ? '✓' : 'COPY'}</span>
+              <span className="lbl opacity-85">{copied ? '✓' : 'COPY'}</span>
             </button>
 
             <a

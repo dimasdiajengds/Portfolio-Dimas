@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: 'Dimas Di Ajeng Duwi Saputra | Portfolio',
   description:
     'Minimalist software engineering portfolio & interactive 3D Vinyl LP project showcase by Dimas Di Ajeng Duwi Saputra.',
+  other: {
+    'darkreader-lock': '',
+  },
 };
 
 export default function RootLayout({

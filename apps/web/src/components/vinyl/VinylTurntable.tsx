@@ -36,15 +36,17 @@ export function VinylTurntable({
   const inView = useInViewport(deckRef, '120px 0px');
   const armUid = useId().replace(/:/g, '');
 
-  // Playback, tonearm, scratch, & horizontal volume state
-  const [isPlaying, setIsPlaying] = useState(true);
+  // Playback, tonearm, scratch, & horizontal volume state (defaults OFF on load & project switch)
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isScratching, setIsScratching] = useState(false);
-  const [tonearmEngaged, setTonearmEngaged] = useState(true);
+  const [tonearmEngaged, setTonearmEngaged] = useState(false);
   const [justLanded, setJustLanded] = useState(false);
   const [volume, setVolume] = useState(72); // 0..100
 
   // Continuous rotation angle ref (shared seamlessly between auto-spin & manual drag scratching)
   const angleRef = useRef<number>(startAngleDeg);
+  const prevLandNonceRef = useRef<number>(landNonce);
+  const prevProjectIdRef = useRef<string>(project.id);
   const audioRef = useRef<TurntableAudioEngine | null>(null);
   const scratchRef = useRef({
     active: false,
@@ -92,7 +94,9 @@ export function VinylTurntable({
     }
   }, [landNonce, startAngleDeg]);
 
-  // Sync tonearm & landing settle whenever a disc ejects from Section 2 and drops onto the platter
+  // Sync tonearm & playback:
+  // - Defaults OFF on initial page load and when switching projects via shelf/timeline
+  // - Starts playing automatically ONLY when a clicked vinyl ejects from Section 2 and lands on platter
   useEffect(() => {
     if (incomingFlight) {
       if (scratchRef.current.active) {
@@ -101,13 +105,21 @@ export function VinylTurntable({
         setIsScratching(false);
         audioRef.current?.endScratch();
       }
+      prevProjectIdRef.current = project.id;
+      setIsPlaying(false);
       setTonearmEngaged(false);
       setJustLanded(false);
       return;
     }
 
-    setIsPlaying(true);
-    if (landNonce > 0) {
+    const didLandJustNow = landNonce > prevLandNonceRef.current;
+    prevLandNonceRef.current = landNonce;
+
+    const didProjectChange = project.id !== prevProjectIdRef.current;
+    prevProjectIdRef.current = project.id;
+
+    if (didLandJustNow) {
+      setIsPlaying(true);
       setJustLanded(true);
       const dropArmTimer = window.setTimeout(() => {
         setTonearmEngaged(true);
@@ -121,7 +133,15 @@ export function VinylTurntable({
       };
     }
 
-    setTonearmEngaged(true);
+    if (didProjectChange) {
+      setIsPlaying(false);
+      setTonearmEngaged(false);
+      setJustLanded(false);
+      angleRef.current = 0;
+      if (discSpinnerRef.current) {
+        discSpinnerRef.current.style.transform = 'rotate(0deg)';
+      }
+    }
   }, [incomingFlight, landNonce, project.id]);
 
   // Ultra-lightweight native-refresh-rate auto-spin loop (sleeps at 0% CPU when stopped, scratching, or off-screen)

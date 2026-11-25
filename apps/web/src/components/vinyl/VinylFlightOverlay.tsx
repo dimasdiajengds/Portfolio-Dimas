@@ -101,7 +101,9 @@ export function VinylFlightOverlay({ flight, onLand }: VinylFlightOverlayProps) 
       const curScroll = window.scrollY;
       const detailEl = document.getElementById('project-detail');
       if (detailEl) {
-        const rawTop = detailEl.getBoundingClientRect().top + curScroll;
+        // Leave clean breathing room below the fixed navbar (76px mobile / 92px desktop)
+        const navClearance = window.innerWidth >= 768 ? 52 : 40;
+        const rawTop = detailEl.getBoundingClientRect().top + curScroll - navClearance;
         const maxScroll = Math.max(
           0,
           document.documentElement.scrollHeight - window.innerHeight,
