@@ -257,7 +257,7 @@ export function ProjectMockupCarousel({ project }: ProjectMockupCarouselProps) {
         onPointerMove={handlePointerMove}
         onPointerUp={finishDrag}
         onPointerCancel={finishDrag}
-        className={`relative w-full aspect-[16/9] sm:aspect-[22/8.4] lg:aspect-[25/8.6] rounded-[14px] overflow-hidden bg-[var(--paper)] select-none outline-none focus-visible:ring-2 focus-visible:ring-[var(--cobalt)]/45 ${
+        className={`relative w-full aspect-[16/9] sm:aspect-[22/8.4] lg:aspect-[25/8.6] rounded-[14px] overflow-hidden bg-[var(--sheet)] select-none outline-none focus-visible:ring-2 focus-visible:ring-[var(--cobalt)]/45 ${
           slideCount > 1 ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-default'
         }`}
         style={{ touchAction: 'pan-y' }}
@@ -273,7 +273,7 @@ export function ProjectMockupCarousel({ project }: ProjectMockupCarouselProps) {
               <div
                 key={isClone ? `${slide.id}-clone` : slide.id}
                 aria-hidden={isClone}
-                className="relative w-full h-full shrink-0 overflow-hidden bg-[var(--paper)]"
+                className="relative w-full h-full shrink-0 overflow-hidden bg-[var(--sheet)]"
               >
                 {slide.imageSrc ? (
                   /* eslint-disable-next-line @next/next/no-img-element */

@@ -41,7 +41,7 @@ export function ProjectDetailSection({
     <section
       id="project-detail"
       aria-label={`Project Details: ${project.title}`}
-      className="relative w-full min-h-[100svh] scroll-mt-[52px] bg-[var(--sheet)] px-4 md:px-9 pt-10 md:pt-12 pb-16 md:pb-24"
+      className="relative w-full min-h-[100svh] scroll-mt-[52px] bg-[var(--paper)] px-4 md:px-9 pt-10 md:pt-12 pb-16 md:pb-20"
     >
       <div className="relative max-w-[1520px] mx-auto">
         {/* Top Row: Project Narrative (Left) & Fixed Turntable (Right) — locked height keeps button & slide 100% static */}

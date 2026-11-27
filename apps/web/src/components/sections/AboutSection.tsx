@@ -1,4 +1,25 @@
 import { PROFILE } from '@/data/profile';
+import { ExperienceTimeline } from '@/components/sections/ExperienceTimeline';
+
+function escapeRegExp(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function renderHighlightedStatement(text: string, boldWords: readonly string[]) {
+  if (boldWords.length === 0) return text;
+  const pattern = new RegExp(`\\b(${boldWords.map(escapeRegExp).join('|')})\\b`, 'gi');
+  const boldSet = new Set(boldWords.map((w) => w.toLowerCase()));
+
+  return text.split(pattern).map((part, idx) =>
+    boldSet.has(part.toLowerCase()) ? (
+      <strong key={idx} className="font-extrabold text-[var(--ink)]">
+        {part}
+      </strong>
+    ) : (
+      <span key={idx}>{part}</span>
+    ),
+  );
+}
 
 export function AboutSection() {
   const { about } = PROFILE;
@@ -7,91 +28,109 @@ export function AboutSection() {
     <section
       id="about"
       aria-label="About and Experience"
-      className="relative w-full bg-[var(--paper)] border-t border-[var(--hairline)] px-4 md:px-9 py-24 md:py-32"
+      className="relative w-full bg-[var(--paper)]"
     >
-      <div className="max-w-[1520px] mx-auto">
-        <div className="pb-6 border-b border-[var(--hairline)] flex items-center justify-between">
-          <span className="lbl text-[var(--ink)]">{about.sectionLabel}</span>
-          <span className="lbl text-[var(--muted)]">{PROFILE.fullName.toUpperCase()}</span>
-        </div>
-
-        {/* Asymmetric 4:8 Bio Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pt-14 pb-20 border-b border-[var(--hairline)]">
-          <div className="lg:col-span-4">
-            <h2 className="text-[clamp(28px,3.2vw,44px)] font-extrabold leading-[1.08] tracking-[-0.03em] text-[var(--ink)]">
-              {about.headline}
-            </h2>
-          </div>
-
-          <div className="lg:col-span-8 lg:pl-8 space-y-6">
-            {about.paragraphs.map((text, idx) => (
-              <p
-                key={idx}
-                className="text-[18px] md:text-[20px] font-medium leading-[1.55] tracking-[-0.015em] text-[var(--ink)]/88 max-w-[58ch]"
-              >
-                {text}
+      {/* Upper White About Statement & Portrait Row */}
+      <div className="px-4 md:px-9 pt-12 md:pt-16 pb-6 md:pb-10">
+        <div className="max-w-[1520px] mx-auto">
+          {/* Balanced 3-Column Statement & Rounded 3:4 Portrait Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-8 lg:gap-12 items-start">
+            <div className="flex flex-col items-start gap-12 md:gap-16 lg:gap-20">
+              <h2 className="text-[clamp(42px,4.5vw,70px)] font-extrabold leading-[0.98] tracking-[-0.035em] text-[var(--ink)] whitespace-pre-line">
+                {about.headline}
+              </h2>
+              <p className="text-[clamp(22px,2.25vw,32px)] font-medium leading-[1.18] tracking-[-0.02em] text-[var(--ink)]/90">
+                {about.subheadline}
               </p>
-            ))}
+            </div>
+
+            {/* Center Rounded 3:4 Portrait Photo Placeholder (3 width : 4 height) */}
+            <div className="mx-auto w-[230px] sm:w-[260px] lg:w-[270px] xl:w-[300px] aspect-[3/4] rounded-[28px] overflow-hidden bg-[var(--sheet)] shrink-0">
+              {about.portraitSrc ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={about.portraitSrc}
+                  alt={PROFILE.fullName}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover object-top select-none"
+                />
+              ) : (
+                <div
+                  className="w-full h-full flex flex-col items-center justify-center gap-2 px-4 text-center select-none"
+                  style={{
+                    backgroundImage:
+                      'radial-gradient(rgba(10, 10, 10, 0.07) 1px, transparent 1px)',
+                    backgroundSize: '16px 16px',
+                  }}
+                >
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-[var(--muted)]/75"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="8.5" r="3.5" />
+                    <path d="M5.5 19.5c1.6-3.1 4-4.5 6.5-4.5s4.9 1.4 6.5 4.5" />
+                  </svg>
+                  <span className="lbl text-[var(--muted)]">PHOTO PLACEHOLDER · 3:4</span>
+                </div>
+              )}
+            </div>
+
+            <div className="lg:self-center">
+              <p className="text-[clamp(28px,3.2vw,44px)] font-normal leading-[1.12] tracking-[-0.025em] text-[var(--ink)]/78">
+                {renderHighlightedStatement(about.rightHeadline, about.rightHeadlineBold)}
+              </p>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Experience Timeline (Hairline Rows) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 py-20 border-b border-[var(--hairline)]">
-          <div className="lg:col-span-4">
-            <span className="lbl text-[var(--ink)]">EXPERIENCE TIMELINE</span>
-            <p className="text-[15.5px] font-medium leading-[1.52] tracking-[-0.01em] text-[var(--muted)] mt-3 max-w-[30ch]">
-              Key roles, industry programs, and flagship builds from 2023 to 2026.
-            </p>
-          </div>
+      {/* Seamless Single-Surface White -> Black Transition into Experience Timeline + Capabilities */}
+      <div
+        className="relative w-full text-white px-4 md:px-9 pt-[190px] md:pt-[236px] pb-20 md:pb-28"
+        style={{
+          backgroundColor: '#0A0A0A',
+          backgroundImage:
+            'linear-gradient(to bottom, #FFFFFF 0px, #FAFAFA 24px, #F0F0F0 48px, #DEDEDE 72px, #C2C2C2 96px, #9D9D9D 120px, #767676 144px, #505050 168px, #313131 190px, #1C1C1C 208px, #101010 222px, #0A0A0A 236px, #0A0A0A 100%)',
+        }}
+      >
+        <div id="experience-timeline" className="max-w-[1520px] mx-auto">
+          <ExperienceTimeline experiences={about.experiences} />
 
-          <div className="lg:col-span-8 lg:pl-8 divide-y divide-[var(--hairline)] border-t border-b border-[var(--hairline)]">
-            {about.experiences.map((exp) => (
-              <div
-                key={`${exp.period}-${exp.role}`}
-                className="py-7 grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-6 items-baseline"
-              >
-                <div className="sm:col-span-3">
-                  <span className="lbl text-[var(--cobalt)]">{exp.period}</span>
+          {/* Capabilities & Stack */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pt-16 md:pt-20">
+            <div className="lg:col-span-4">
+              <span className="lbl text-white">CAPABILITIES &amp; STACK</span>
+              <p className="text-[15.5px] font-medium leading-[1.52] tracking-[-0.01em] text-white/58 mt-3 max-w-[30ch]">
+                Focused tooling chosen for clarity, speed, and maintainability.
+              </p>
+            </div>
+
+            <div className="lg:col-span-8 lg:pl-8 grid grid-cols-1 sm:grid-cols-3 gap-10">
+              {about.capabilities.map((group) => (
+                <div key={group.category} className="border-t border-white/25 pt-5">
+                  <h3 className="lbl text-white mb-4">{group.category}</h3>
+                  <ul className="space-y-2.5 m-0 p-0 list-none">
+                    {group.items.map((item) => (
+                      <li
+                        key={item}
+                        className="text-[15.5px] font-semibold tracking-[-0.01em] text-white/82 leading-[1.45]"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="sm:col-span-9">
-                  <h3 className="text-[20px] font-bold tracking-[-0.02em] text-[var(--ink)]">
-                    {exp.role}
-                  </h3>
-                  <p className="lbl text-[var(--muted)] mt-1.5">{exp.org}</p>
-                  <p className="text-[15.5px] font-medium leading-[1.54] tracking-[-0.01em] text-[var(--ink)]/84 mt-3 max-w-[56ch]">
-                    {exp.summary}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Capabilities & Stack (Clean 3-Column Hairline List) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pt-20">
-          <div className="lg:col-span-4">
-            <span className="lbl text-[var(--ink)]">CAPABILITIES &amp; STACK</span>
-            <p className="text-[15.5px] font-medium leading-[1.52] tracking-[-0.01em] text-[var(--muted)] mt-3 max-w-[30ch]">
-              Focused tooling chosen for clarity, speed, and maintainability.
-            </p>
-          </div>
-
-          <div className="lg:col-span-8 lg:pl-8 grid grid-cols-1 sm:grid-cols-3 gap-10">
-            {about.capabilities.map((group) => (
-              <div key={group.category} className="border-t border-[var(--rule)] pt-5">
-                <h3 className="lbl text-[var(--ink)] mb-4">{group.category}</h3>
-                <ul className="space-y-2.5 m-0 p-0 list-none">
-                  {group.items.map((item) => (
-                    <li
-                      key={item}
-                      className="text-[15.5px] font-semibold tracking-[-0.01em] text-[var(--ink)]/86 leading-[1.45]"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

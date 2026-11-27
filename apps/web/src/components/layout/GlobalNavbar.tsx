@@ -28,20 +28,47 @@ function SolidSocialIcon({ id }: { id: SocialId }) {
   }
 }
 
+type NavSurface = 'hero-dark' | 'light' | 'footer-dark';
+
 export function GlobalNavbar() {
-  const [scrolled, setScrolled] = useState(false);
+  const [surface, setSurface] = useState<NavSurface>('hero-dark');
   const [activeId, setActiveId] = useState<string>('projects');
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const isLight = surface === 'light';
+
   useEffect(() => {
     const onScroll = () => {
+      const vh = window.innerHeight || 800;
       const projectsEl = document.getElementById('projects');
+      const timelineEl = document.getElementById('experience-timeline');
+      const aboutEl = document.getElementById('about');
+      const contactEl = document.getElementById('contact');
+
       if (projectsEl) {
-        const rect = projectsEl.getBoundingClientRect();
-        // Transition navbar to light theme smoothly as user approaches the white section
-        setScrolled(rect.top <= 160);
+        const projectsRect = projectsEl.getBoundingClientRect();
+        if (projectsRect.top > 160) {
+          setSurface('hero-dark');
+        } else if (timelineEl && timelineEl.getBoundingClientRect().top <= 96) {
+          setSurface('footer-dark');
+        } else {
+          setSurface('light');
+        }
       } else {
-        setScrolled(window.scrollY > window.innerHeight * 0.78);
+        setSurface(window.scrollY > vh * 0.78 ? 'light' : 'hero-dark');
+      }
+
+      const atPageBottom =
+        window.scrollY + vh >= document.documentElement.scrollHeight - 40;
+      if (
+        contactEl &&
+        (contactEl.getBoundingClientRect().top <= vh * 0.48 || atPageBottom)
+      ) {
+        setActiveId('contact');
+      } else if (aboutEl && aboutEl.getBoundingClientRect().top <= vh * 0.45) {
+        setActiveId('about');
+      } else {
+        setActiveId('projects');
       }
     };
     onScroll();
@@ -53,50 +80,29 @@ export function GlobalNavbar() {
     };
   }, []);
 
-  useEffect(() => {
-    const ids = PROFILE.navLinks.map((l) => l.id);
-    const elements = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => Boolean(el));
-
-    if (elements.length === 0 || typeof IntersectionObserver === 'undefined') return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible[0]?.target.id) {
-          setActiveId(visible[0].target.id);
-        }
-      },
-      { rootMargin: '-30% 0px -50% 0px', threshold: [0, 0.25, 0.5] },
-    );
-
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
+  const headerClass =
+    surface === 'light'
+      ? 'bg-white/95 border-b border-[var(--hairline)]'
+      : surface === 'footer-dark'
+        ? 'bg-[#0A0A0A]/92 border-b border-white/10'
+        : 'bg-transparent border-b border-transparent';
 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
-          scrolled
-            ? 'bg-white/95 border-b border-[var(--hairline)]'
-            : 'bg-transparent border-b border-transparent'
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${headerClass}`}
       >
         <div className="h-[76px] md:h-[92px] px-5 md:px-12 flex items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr] max-w-[1680px] mx-auto">
           {/* Left: Minimalist Brand (D! identity) */}
           <a
             href="#hero"
             className={`md:justify-self-start flex items-center gap-3.5 group focus:outline-none transition-colors duration-300 ${
-              scrolled ? 'text-[var(--ink)]' : 'text-white'
+              isLight ? 'text-[var(--ink)]' : 'text-white'
             }`}
             onClick={() => setMenuOpen(false)}
           >
             <img
-              src={scrolled ? '/assets/logo/Light-r2.png' : '/assets/logo/Dark-r2.png'}
+              src={isLight ? '/assets/logo/Light-r2.png' : '/assets/logo/Dark-r2.png'}
               alt={PROFILE.brandMark}
               className="h-[30px] w-auto object-contain"
             />
@@ -117,7 +123,7 @@ export function GlobalNavbar() {
                   key={link.id}
                   href={link.href}
                   className={`relative py-1.5 text-[16px] md:text-[17px] font-bold tracking-[-0.01em] transition-colors duration-200 ${
-                    scrolled
+                    isLight
                       ? isActive
                         ? 'text-[var(--ink)]'
                         : 'text-[var(--ink)]/60 hover:text-[var(--ink)]'
@@ -137,7 +143,7 @@ export function GlobalNavbar() {
             })}
           </nav>
 
-          {/* Right: Solid Social Icons (Light on dark hero / Dark on light sections) + Mobile Burger */}
+          {/* Right: Solid Social Icons (Light on dark surfaces / Dark on light sections) + Mobile Burger */}
           <div className="md:justify-self-end flex items-center gap-4">
             <div className="hidden md:flex items-center gap-4">
               {PROFILE.headerSocials.map((social) => (
@@ -148,7 +154,7 @@ export function GlobalNavbar() {
                   rel="noopener noreferrer"
                   aria-label={social.name}
                   className={`inline-flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-300 ${
-                    scrolled
+                    isLight
                       ? 'text-[var(--ink)] hover:text-[var(--cobalt)]'
                       : 'text-white hover:text-[var(--cobalt)]'
                   }`}
@@ -164,7 +170,7 @@ export function GlobalNavbar() {
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((prev) => !prev)}
               className={`md:hidden w-11 h-11 flex flex-col items-center justify-center gap-[7px] transition-colors duration-300 ${
-                scrolled || menuOpen ? 'text-[var(--ink)]' : 'text-white'
+                isLight || menuOpen ? 'text-[var(--ink)]' : 'text-white'
               }`}
             >
               <span

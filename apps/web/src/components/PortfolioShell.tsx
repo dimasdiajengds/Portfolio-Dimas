@@ -69,7 +69,7 @@ export function PortfolioShell() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[var(--paper)] text-[var(--ink)]">
+    <div className="relative min-h-screen bg-[#0A0A0A] text-[var(--ink)]">
       <PaperGrainOverlay />
       <GlobalNavbar />
       <VinylFlightOverlay flight={flightRequest} onLand={handleVinylLand} />

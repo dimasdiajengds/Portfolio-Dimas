@@ -32,34 +32,48 @@ export const PROFILE = {
     { id: 'tiktok', name: 'TikTok', href: 'https://tiktok.com/' },
   ],
   about: {
-    sectionLabel: '04 / ABOUT & EXPERIENCE',
-    headline:
-      'Building software that balances architectural clarity with tactile, memorable craft.',
-    paragraphs: [
-      '[PLACEHOLDER] Saya Dimas Di Ajeng Duwi Saputra, seorang pengembang perangkat lunak yang fokus merancang dan membangun sistem digital dari sisi antarmuka hingga arsitektur backend dan cloud.',
-      '[PLACEHOLDER] Berpengalaman mengerjakan proyek lintas domain mulai dari integrasi Genesys Cloud CX, asisten AI percakapan, sistem desktop Java, hingga aplikasi web modern berbasis Next.js dan TypeScript dengan standar performa tinggi.',
-    ],
+    headline: "Hi, I'm\nDimas Saputra.",
+    subheadline:
+      'AI Engineer, Software Engineer, Cloud Engineer, Full-Stack Dev, Systems / Solutions Architect, Product Engineer.',
+    rightHeadline:
+      'I build complete Digital Systems bridging interactive interfaces, scalable Cloud architectures, and practical AI integrations.',
+    rightHeadlineBold: ['digital systems', 'cloud', 'AI'],
+    portraitSrc: '',
     experiences: [
       {
-        period: '2025 - 2026',
-        role: 'Full-Stack & Product Developer',
-        org: 'Independent & Flagship Works (ESC · LogHub · Grace)',
+        period: '2022 Feb - 2022 Jul',
+        role: 'Data Entry & Database Admin',
+        org: 'Partai Ummat',
         summary:
-          '[PLACEHOLDER] Merancang dan membangun platform web modern, sistem logbook terpusat, serta pengalaman digital brand dengan fokus pada kecepatan dan keterbacaan.',
+          'Managed document data entry and SIPOL web database uploads, verifying records to eliminate errors and duplicates while performing regular security backups and preparing summary reports.',
       },
       {
-        period: '2024',
-        role: 'Lead Developer / Academic Thesis & AI Projects',
-        org: 'NATASHA Pondok Kos · Psychobot',
+        period: '2024 Feb - 2024 Aug',
+        role: 'Cloud Computing Cohort',
+        org: 'Bangkit Academy 2024 By Google, GoTo, Tokopedia, Traveloka - Cloud Computing',
         summary:
-          '[PLACEHOLDER] Mengembangkan sistem manajemen berbasis Java OOP dan mengeksplorasi integrasi percakapan AI untuk aplikasi screening psikologi.',
+          'Deployed scalable JavaScript and Python backends using Compute Engine, Cloud Run, App Engine, Cloud SQL, Cloud Storage, Docker, and IAM to deliver reliable capstone APIs,and also Completed Bangkit Academy on time.',
       },
       {
-        period: '2023',
-        role: 'Cloud & Contact Center Engineer (MSIB)',
-        org: 'Solutif / Genesys Cloud CX (Skynet) · Sebatik',
+        period: '2024 Sep - 2024 Dec',
+        role: 'Systems Solutions Architect & Cloud Engineer',
+        org: 'PT Solutif Tiga Selaras',
         summary:
-          '[PLACEHOLDER] Berkontribusi pada implementasi alur contact center Genesys Cloud melalui program MSIB Kampus Merdeka serta pengembangan platform katalog digital Sebatik.',
+          'Configured Genesys Cloud routing workflows, CRM API integrations, IVR scripts, and chatbots for Skynet to reduce wait times, track KPIs, and uphold strict security standards.',
+      },
+      {
+        period: '2021 Aug - 2025 Aug',
+        role: 'Graduate',
+        org: 'Universitas Indraprasta PGRI',
+        summary:
+          '[PLACEHOLDER] Membangun dasar rekayasa perangkat lunak, pemrograman berorientasi objek, serta eksplorasi antarmuka web modern.',
+      },
+      {
+        period: '2026 Aug - Present',
+        role: 'Full-Stack Dev & DevOps',
+        org: 'Digital Channel - PT. XLSMART Telecom Sejahter tbk. Batch 1 Maganghub',
+        summary:
+          '[PLACEHOLDER] Deskripsi pengalaman kerja, tanggung jawab utama, dan hasil proyek yang ingin ditampilkan di titik ke-5 ini.',
       },
     ],
     capabilities: [
